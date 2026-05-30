@@ -1,0 +1,11 @@
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\bin\Debug\net8.0\MiniKanban.Application.deps.json
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\bin\Debug\net8.0\MiniKanban.Application.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\bin\Debug\net8.0\MiniKanban.Application.pdb
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\MiniKanban.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\MiniKanban.Application.AssemblyInfoInputs.cache
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\MiniKanban.Application.AssemblyInfo.cs
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\MiniKanban.Application.csproj.CoreCompileInputs.cache
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\MiniKanban.Application.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\refint\MiniKanban.Application.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\MiniKanban.Application.pdb
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Application\obj\Debug\net8.0\ref\MiniKanban.Application.dll

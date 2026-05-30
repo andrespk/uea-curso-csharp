@@ -1,0 +1,11 @@
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\bin\Debug\net8.0\MiniKanban.Domain.deps.json
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\bin\Debug\net8.0\MiniKanban.Domain.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\bin\Debug\net8.0\MiniKanban.Domain.pdb
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\MiniKanban.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\MiniKanban.Domain.AssemblyInfoInputs.cache
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\MiniKanban.Domain.AssemblyInfo.cs
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\MiniKanban.Domain.csproj.CoreCompileInputs.cache
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\MiniKanban.Domain.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\refint\MiniKanban.Domain.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\MiniKanban.Domain.pdb
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Domain\obj\Debug\net8.0\ref\MiniKanban.Domain.dll

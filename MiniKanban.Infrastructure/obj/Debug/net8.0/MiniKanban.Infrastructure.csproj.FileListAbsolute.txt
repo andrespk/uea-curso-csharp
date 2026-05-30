@@ -1,0 +1,11 @@
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\bin\Debug\net8.0\MiniKanban.Infrastructure.deps.json
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\bin\Debug\net8.0\MiniKanban.Infrastructure.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\bin\Debug\net8.0\MiniKanban.Infrastructure.pdb
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\MiniKanban.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\MiniKanban.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\MiniKanban.Infrastructure.AssemblyInfo.cs
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\MiniKanban.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\MiniKanban.Infrastructure.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\refint\MiniKanban.Infrastructure.dll
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\MiniKanban.Infrastructure.pdb
+C:\Users\devne\Documents\NelsonVillarreal\Projectos\uea-curso-csharp\MiniKanban.Infrastructure\obj\Debug\net8.0\ref\MiniKanban.Infrastructure.dll

@@ -10,6 +10,8 @@ using MiniKanban.Domain.Entities;
 using MiniKanban.Application.Helpers;
 using MiniKanban.Infrastructure.Data.Context;
 using MiniKanban.Infrastructure.IoC;
+using MiniKanban.API.Handlers;
+using MiniKanban.API.Filters;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.OperationFilter<ExceptionResponseOperationFilter>();
+
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "MiniKanban API",
@@ -75,8 +79,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 try
 {

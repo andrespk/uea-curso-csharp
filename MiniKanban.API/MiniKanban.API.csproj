@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniKanban.Infrastructure\MiniKanban.Infrastructure.csproj" />
     <ProjectReference Include="..\MiniKanban.Application\MiniKanban.Application.csproj" />
+    <ProjectReference Include="..\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj" />
   </ItemGroup>
 
 </Project>

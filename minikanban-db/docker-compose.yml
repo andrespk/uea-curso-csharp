@@ -1,0 +1,23 @@
+services:
+  minikanban-postgres:
+    image: postgres-15
+    container_name: minikanban-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: minikanban_db
+      POSTGRES_USER: minikanban_user
+      POSTGRES_PASSWORD: minikanban_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - minikanban_postgres_data:/var/lib/postgresql/data
+      - ./minikanban-db/init:/docker-entrypoint-initdb.d
+    networks:
+      - minisocial-network
+
+volumes:
+  minikanban_postgres_data:
+
+networks:
+  minikanban-network:
+    driver: bridge

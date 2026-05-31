@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MiniKanban.API.Endpoints;
+using MiniKanban.Infrastructure.Api;
 using MiniKanban.Domain.Entities;
 using MiniKanban.Application.Helpers;
 using MiniKanban.Infrastructure.Data.Context;
@@ -71,46 +71,56 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+try
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<MiniKanbanDbContext>();
-    
-    var migrations = dbContext.Database.GetMigrations();
-    if (migrations.Any())
+    using (var scope = app.Services.CreateScope())
     {
-        await dbContext.Database.MigrateAsync();
-    }
-    else
-    {
-        var databaseCreator = dbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
-        if (databaseCreator != null)
+        var dbContext = scope.ServiceProvider.GetRequiredService<MiniKanbanDbContext>();
+        
+        var migrations = dbContext.Database.GetMigrations();
+        if (migrations.Any())
         {
-            if (!databaseCreator.Exists()) 
-                await databaseCreator.CreateAsync();
-            
-            if (!databaseCreator.HasTables()) 
-                await databaseCreator.CreateTablesAsync();
+            await dbContext.Database.MigrateAsync();
+        }
+        else
+        {
+            var databaseCreator = dbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+            if (databaseCreator != null)
+            {
+                if (!databaseCreator.Exists()) 
+                    await databaseCreator.CreateAsync();
+                
+                if (!databaseCreator.HasTables()) 
+                    await databaseCreator.CreateTablesAsync();
+            }
+        }
+
+        if (!await dbContext.Users.AnyAsync())
+        {
+            var adminUser = new User
+            {
+                Username = "admin",
+                Email = "admin@kanban.com",
+                PasswordHash = PasswordHasher.Hash("Password123"),
+                Role = "Admin"
+            };
+            await dbContext.Users.AddAsync(adminUser);
+            await dbContext.SaveChangesAsync();
         }
     }
-
-    if (!await dbContext.Users.AnyAsync())
-    {
-        var adminUser = new User
-        {
-            Username = "admin",
-            Email = "admin@kanban.com",
-            PasswordHash = PasswordHasher.Hash("Password123"),
-            Role = "Admin"
-        };
-        await dbContext.Users.AddAsync(adminUser);
-        await dbContext.SaveChangesAsync();
-    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Database migration/initialization failed: {ex.Message}");
 }
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("/api-docs", options =>
+    {
+        options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json");
+    });
 }
 
 app.UseHttpsRedirection();

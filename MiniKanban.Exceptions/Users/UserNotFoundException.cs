@@ -1,6 +1,6 @@
 ﻿namespace MiniKanban.Exceptions.Users;
 
-public class UserNotFoundException
+public class UserNotFoundException : Exception
 {
     
 }

@@ -17,6 +17,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "MiniKanban API",
+        Version = "v1",
+        Description = "API de gerenciamento de quadros Kanban com suporte a colunas e tarefas. Inclui autenticação via JWT e persistência em PostgreSQL."
+    });
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

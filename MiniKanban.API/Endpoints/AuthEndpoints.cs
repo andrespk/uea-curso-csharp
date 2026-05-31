@@ -19,6 +19,11 @@ public class AuthEndpoints : IEndpoint
             return Results.Ok(result);
         })
         .WithName("Login")
+        .WithSummary("Realiza o login do usuário")
+        .WithDescription("Autentica o usuário no sistema com base no Username e Password, retornando as informações do usuário e o token JWT correspondente.")
+        .WithTags("Autenticação")
+        .Produces<LoginResponseDto>(200)
+        .Produces(401)
         .WithOpenApi();
 
         app.MapGet("/api/protected", () =>
@@ -27,6 +32,11 @@ public class AuthEndpoints : IEndpoint
         })
         .RequireAuthorization()
         .WithName("Protected")
+        .WithSummary("Acessa endpoint protegido")
+        .WithDescription("Retorna uma mensagem de confirmação para testar se o token JWT fornecido no cabeçalho Authorization é válido.")
+        .WithTags("Autenticação")
+        .Produces(200)
+        .Produces(401)
         .WithOpenApi();
     }
 }

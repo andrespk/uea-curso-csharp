@@ -7,8 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.27" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniKanban.Infrastructure\MiniKanban.Infrastructure.csproj" />
+    <ProjectReference Include="..\MiniKanban.Application\MiniKanban.Application.csproj" />
+    <ProjectReference Include="..\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj" />
   </ItemGroup>
 
 </Project>

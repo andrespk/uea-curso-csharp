@@ -15,7 +15,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         DbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(int id)
+    public virtual async Task<TEntity?> GetByIdAsync(Guid id)
     {
         return await DbSet.FindAsync(id);
     }
@@ -23,11 +23,6 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
     {
         return await DbSet.ToListAsync();
-    }
-
-    public virtual async Task<IEnumerable<TEntity>> FindAsync(Func<TEntity, bool> predicate)
-    {
-        return await Task.FromResult(DbSet.Where(predicate).ToList());
     }
 
     public virtual async Task AddAsync(TEntity entity)
@@ -58,7 +53,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         await Task.CompletedTask;
     }
 
-    public virtual async Task<bool> ExistsAsync(int id)
+    public virtual async Task<bool> ExistsAsync(Guid id)
     {
         var entity = await GetByIdAsync(id);
         return entity != null;

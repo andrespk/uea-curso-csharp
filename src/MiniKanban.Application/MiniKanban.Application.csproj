@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiniKanban.Domain\MiniKanban.Domain.csproj" />
+    <ProjectReference Include="..\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

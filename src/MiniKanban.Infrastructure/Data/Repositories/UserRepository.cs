@@ -21,4 +21,14 @@ public class UserRepository : Repository<User>, IUserRepository, ScopedInjection
     {
         return await Context.Set<User>().FirstOrDefaultAsync(u => u.Username == username);
     }
+
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        return await Context.Set<User>().AnyAsync(u => u.Email == email);
+    }
+
+    public async Task<bool> UsernameExistsAsync(string username)
+    {
+        return await Context.Set<User>().AnyAsync(u => u.Username == username);
+    }
 }

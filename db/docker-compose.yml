@@ -1,17 +1,16 @@
-version: '3.8'
-
 services:
   minikanban-db:
     image: postgres:16
     container_name: minikanban-db
     environment:
-      POSTGRES_DB: MiniKanbanDb
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
     restart: always
 
 volumes:

@@ -16,12 +16,16 @@ public class GetBoardsByOwnerService : IGetBoardsByOwnerService, ScopedInjection
         _userRepository = userRepository;
     }
 
-    public async Task<IEnumerable<BoardResponseDto>> GetByOwnerIdAsync(Guid ownerId)
+    public async Task<IEnumerable<BoardResponseDto>> GetByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
     {
-        if (await _userRepository.GetByIdAsync(ownerId) == null)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (await _userRepository.GetByIdAsync(ownerId, cancellationToken) == null)
             throw new BusinessException("Owner user not found.");
 
-        var boards = await _boardRepository.GetByOwnerIdAsync(ownerId);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var boards = await _boardRepository.GetByOwnerIdAsync(ownerId, cancellationToken);
         return boards.Select(BoardMapping.ToResponse);
     }
 }

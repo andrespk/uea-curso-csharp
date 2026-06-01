@@ -1,0 +1,74 @@
+# === .NET Core / C# ===
+# Build results
+[Bb]in/
+[Oo]bj/
+[Log]s/
+[Tt]est[Rr]esults/
+[Dd]ebug/
+[Rr]elease/
+publish/
+out/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Mono class library database
+*.mdb
+*.ldb
+
+# Expression Profiler
+*.pidb
+
+# Roslyn cache directories
+.vs/
+.idea/
+.vscode/
+*.sln.DotSettings.user
+
+# === TypeScript / Node / JavaScript ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm/
+.eslintcache
+.stylelintcache
+.tsbuildinfo
+*.tsbuildinfo
+dist/
+build/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# === Environment / Secrets ===
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+appsettings.local.json
+
+# === OS Files ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# === Temp / Misc ===
+*.tmp
+*.log
+*.swp
+*~

@@ -16,21 +16,21 @@ public class UpdateBoardService : IUpdateBoardService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardResponseDto> UpdateAsync(Guid id, UpdateBoardDto request)
+    public async Task<BoardResponseDto> UpdateAsync(Guid id, UpdateBoardDto request, CancellationToken cancellationToken = default)
     {
-        var board = await _boardRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var board = await _boardRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Board not found.");
 
-        if (!string.IsNullOrWhiteSpace(request.Name))
-            board.Name = request.Name;
+        cancellationToken.ThrowIfCancellationRequested();
 
-        if (request.Description != null)
-            board.Description = request.Description;
+        BoardMapping.ToEntity(request, board);
 
         board.UpdatedAt = DateTime.UtcNow;
 
-        await _boardRepository.UpdateAsync(board);
-        await _unitOfWork.CommitAsync();
+        await _boardRepository.UpdateAsync(board, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return BoardMapping.ToResponse(board);
     }

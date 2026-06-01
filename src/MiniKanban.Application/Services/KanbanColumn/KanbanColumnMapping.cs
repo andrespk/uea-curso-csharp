@@ -10,4 +10,14 @@ internal static class KanbanColumnMapping
     {
         return column.Adapt<KanbanColumnResponseDto>();
     }
+
+    public static KanbanColumn ToEntity(CreateKanbanColumnDto dto)
+    {
+        return dto.Adapt<KanbanColumn>();
+    }
+
+    public static KanbanColumn ToEntity(UpdateKanbanColumnDto dto, KanbanColumn entity)
+    {
+        return dto.Adapt(entity);
+    }
 }

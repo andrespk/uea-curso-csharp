@@ -13,8 +13,12 @@ using MiniKanban.Infrastructure.IoC;
 using MiniKanban.API.Handlers;
 using MiniKanban.API.Filters;
 using Scalar.AspNetCore;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Mapster globally to ignore null values when updating existing objects
+Mapster.TypeAdapterConfig.GlobalSettings.Default.IgnoreNullValues(true);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

@@ -16,34 +16,32 @@ public class UpdateKanbanColumnService : IUpdateKanbanColumnService, ScopedInjec
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<KanbanColumnResponseDto> UpdateAsync(Guid id, UpdateKanbanColumnDto request)
+    public async Task<KanbanColumnResponseDto> UpdateAsync(Guid id, UpdateKanbanColumnDto request, CancellationToken cancellationToken = default)
     {
-        var column = await _kanbanColumnRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var column = await _kanbanColumnRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Kanban column not found.");
 
-        if (!string.IsNullOrWhiteSpace(request.Name))
-            column.Name = request.Name;
+        if (request.Order.HasValue && request.Order.Value < 0)
+            throw new BusinessException("Column order cannot be negative.");
 
-        if (request.Order.HasValue)
+        if (request.WipLimit.HasValue && request.WipLimit.Value < 0)
+            throw new BusinessException("WIP limit cannot be negative.");
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var originalName = column.Name;
+        KanbanColumnMapping.ToEntity(request, column);
+        if (string.IsNullOrWhiteSpace(column.Name))
         {
-            if (request.Order.Value < 0)
-                throw new BusinessException("Column order cannot be negative.");
-
-            column.Order = request.Order.Value;
-        }
-
-        if (request.WipLimit.HasValue)
-        {
-            if (request.WipLimit.Value < 0)
-                throw new BusinessException("WIP limit cannot be negative.");
-
-            column.WipLimit = request.WipLimit;
+            column.Name = originalName;
         }
 
         column.UpdatedAt = DateTime.UtcNow;
 
-        await _kanbanColumnRepository.UpdateAsync(column);
-        await _unitOfWork.CommitAsync();
+        await _kanbanColumnRepository.UpdateAsync(column, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return KanbanColumnMapping.ToResponse(column);
     }

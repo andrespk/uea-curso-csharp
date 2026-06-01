@@ -10,4 +10,14 @@ internal static class CardMapping
     {
         return card.Adapt<CardResponseDto>();
     }
+
+    public static Card ToEntity(CreateCardDto dto)
+    {
+        return dto.Adapt<Card>();
+    }
+
+    public static Card ToEntity(UpdateCardDto dto, Card entity)
+    {
+        return dto.Adapt(entity);
+    }
 }

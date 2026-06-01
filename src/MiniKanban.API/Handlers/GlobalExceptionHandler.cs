@@ -56,6 +56,27 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         var isBusinessOrValidationException = exception is BusinessException || exception is ValidationException;
         var isTokenException = exception is SecurityTokenException;
+        var isCancellationException = exception is OperationCanceledException || exception is TaskCanceledException;
+
+        if (isCancellationException)
+        {
+            _logger.LogInformation("[ALERTA][{LogId}] A operação foi cancelada pelo cliente.", logId);
+            try
+            {
+                httpContext.Response.StatusCode = 499; // Client Closed Request
+                await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+                {
+                    Status = 499,
+                    Title = "Client Closed Request",
+                    Detail = StringifyProblemDetails(logId, "A operação foi cancelada.")
+                }, cancellationToken);
+            }
+            catch
+            {
+                // Ignora falhas de escrita se a conexão já estiver fechada
+            }
+            return true;
+        }
 
         if (isTokenException)
         {

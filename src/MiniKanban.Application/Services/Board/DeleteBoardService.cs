@@ -15,12 +15,16 @@ public class DeleteBoardService : IDeleteBoardService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var board = await _boardRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var board = await _boardRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Board not found.");
 
-        await _boardRepository.DeleteAsync(board);
-        await _unitOfWork.CommitAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _boardRepository.DeleteAsync(board, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

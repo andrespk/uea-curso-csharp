@@ -1,11 +1,12 @@
+using System.Threading;
 using MiniKanban.Domain.Entities;
 
 namespace MiniKanban.Domain.Interfaces;
 
 public interface IUserRepository : IRepository<User>
 {
-    Task<User?> GetByEmailAsync(string email);
-    Task<User?> GetByUsernameAsync(string username);
-    Task<bool> EmailExistsAsync(string email);
-    Task<bool> UsernameExistsAsync(string username);
+    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
+    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);
+    Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default);
 }

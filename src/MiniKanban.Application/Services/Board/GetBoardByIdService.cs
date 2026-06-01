@@ -14,9 +14,11 @@ public class GetBoardByIdService : IGetBoardByIdService, ScopedInjection
         _boardRepository = boardRepository;
     }
 
-    public async Task<BoardResponseDto> GetByIdAsync(Guid id)
+    public async Task<BoardResponseDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var board = await _boardRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var board = await _boardRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Board not found.");
 
         return BoardMapping.ToResponse(board);

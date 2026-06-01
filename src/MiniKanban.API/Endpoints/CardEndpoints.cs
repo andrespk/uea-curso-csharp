@@ -12,7 +12,8 @@ public class CardEndpoints : IEndpoint
         app.MapPost("/api/cards", async (
             HttpContext httpContext,
             [FromBody] CreateCardDto request,
-            ICreateCardService createCardService) =>
+            ICreateCardService createCardService,
+            CancellationToken cancellationToken) =>
         {
             var userId = httpContext.User.GetUserId();
             if (userId == null)
@@ -21,7 +22,7 @@ public class CardEndpoints : IEndpoint
             }
 
             request.CreatedByUserId = userId.Value;
-            var result = await createCardService.CreateAsync(request);
+            var result = await createCardService.CreateAsync(request, cancellationToken);
             return Results.Created($"/api/cards/{result.Id}", result);
         })
         .RequireAuthorization()
@@ -36,9 +37,10 @@ public class CardEndpoints : IEndpoint
 
         app.MapGet("/api/columns/{columnId:guid}/cards", async (
             Guid columnId,
-            IGetCardsByColumnService getCardsByColumnService) =>
+            IGetCardsByColumnService getCardsByColumnService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await getCardsByColumnService.GetByColumnIdAsync(columnId);
+            var result = await getCardsByColumnService.GetByColumnIdAsync(columnId, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -54,9 +56,10 @@ public class CardEndpoints : IEndpoint
         app.MapPut("/api/cards/{id:guid}", async (
             Guid id,
             [FromBody] UpdateCardDto request,
-            IUpdateCardService updateCardService) =>
+            IUpdateCardService updateCardService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await updateCardService.UpdateAsync(id, request);
+            var result = await updateCardService.UpdateAsync(id, request, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()

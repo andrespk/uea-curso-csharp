@@ -12,7 +12,8 @@ public class BoardEndpoints : IEndpoint
         app.MapPost("/api/boards", async (
             HttpContext httpContext,
             [FromBody] CreateBoardDto request,
-            ICreateBoardService createBoardService) =>
+            ICreateBoardService createBoardService,
+            CancellationToken cancellationToken) =>
         {
             var userId = httpContext.User.GetUserId();
             if (userId == null)
@@ -21,7 +22,7 @@ public class BoardEndpoints : IEndpoint
             }
 
             request.OwnerId = userId.Value;
-            var result = await createBoardService.CreateAsync(request);
+            var result = await createBoardService.CreateAsync(request, cancellationToken);
             return Results.Created($"/api/boards/{result.Id}", result);
         })
         .RequireAuthorization()
@@ -36,7 +37,8 @@ public class BoardEndpoints : IEndpoint
 
         app.MapGet("/api/boards", async (
             HttpContext httpContext,
-            IGetBoardsByUserService getBoardsByUserService) =>
+            IGetBoardsByUserService getBoardsByUserService,
+            CancellationToken cancellationToken) =>
         {
             var userId = httpContext.User.GetUserId();
             if (userId == null)
@@ -44,7 +46,7 @@ public class BoardEndpoints : IEndpoint
                 return Results.Unauthorized();
             }
 
-            var result = await getBoardsByUserService.GetByUserIdAsync(userId.Value);
+            var result = await getBoardsByUserService.GetByUserIdAsync(userId.Value, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -56,9 +58,9 @@ public class BoardEndpoints : IEndpoint
         .Produces(401)
         .WithOpenApi();
 
-        app.MapGet("/api/boards/{id:guid}", async (Guid id, IGetBoardByIdService getBoardByIdService) =>
+        app.MapGet("/api/boards/{id:guid}", async (Guid id, IGetBoardByIdService getBoardByIdService, CancellationToken cancellationToken) =>
         {
-            var result = await getBoardByIdService.GetByIdAsync(id);
+            var result = await getBoardByIdService.GetByIdAsync(id, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -73,15 +75,16 @@ public class BoardEndpoints : IEndpoint
 
         app.MapGet("/api/users/{ownerId:guid}/boards/owned", async (
             Guid ownerId,
-            IGetBoardsByOwnerService getBoardsByOwnerService) =>
+            IGetBoardsByOwnerService getBoardsByOwnerService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await getBoardsByOwnerService.GetByOwnerIdAsync(ownerId);
+            var result = await getBoardsByOwnerService.GetByOwnerIdAsync(ownerId, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
         .WithName("GetBoardsByOwner")
         .WithSummary("Lista boards criados por usuário")
-        .WithDescription("Retorna os boards cujo owner corresponde ao usuario informado na rota.")
+        .WithDescription("Retorna os boards cujo owner corresponds ao usuario informado na rota.")
         .WithTags("Boards")
         .Produces<IEnumerable<BoardResponseDto>>(200)
         .Produces(400)
@@ -91,9 +94,10 @@ public class BoardEndpoints : IEndpoint
         app.MapPut("/api/boards/{id:guid}", async (
             Guid id,
             [FromBody] UpdateBoardDto request,
-            IUpdateBoardService updateBoardService) =>
+            IUpdateBoardService updateBoardService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await updateBoardService.UpdateAsync(id, request);
+            var result = await updateBoardService.UpdateAsync(id, request, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -106,9 +110,9 @@ public class BoardEndpoints : IEndpoint
         .Produces(401)
         .WithOpenApi();
 
-        app.MapDelete("/api/boards/{id:guid}", async (Guid id, IDeleteBoardService deleteBoardService) =>
+        app.MapDelete("/api/boards/{id:guid}", async (Guid id, IDeleteBoardService deleteBoardService, CancellationToken cancellationToken) =>
         {
-            await deleteBoardService.DeleteAsync(id);
+            await deleteBoardService.DeleteAsync(id, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization()

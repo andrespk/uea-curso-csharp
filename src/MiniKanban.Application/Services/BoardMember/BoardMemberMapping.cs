@@ -10,4 +10,14 @@ internal static class BoardMemberMapping
     {
         return member.Adapt<BoardMemberResponseDto>();
     }
+
+    public static BoardMember ToEntity(CreateBoardMemberDto dto)
+    {
+        return dto.Adapt<BoardMember>();
+    }
+
+    public static BoardMember ToEntity(UpdateBoardMemberDto dto, BoardMember entity)
+    {
+        return dto.Adapt(entity);
+    }
 }

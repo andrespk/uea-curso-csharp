@@ -10,4 +10,14 @@ internal static class BoardMapping
     {
         return board.Adapt<BoardResponseDto>();
     }
+
+    public static Board ToEntity(CreateBoardDto dto)
+    {
+        return dto.Adapt<Board>();
+    }
+
+    public static Board ToEntity(UpdateBoardDto dto, Board entity)
+    {
+        return dto.Adapt(entity);
+    }
 }

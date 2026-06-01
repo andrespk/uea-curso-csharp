@@ -16,12 +16,16 @@ public class GetBoardMembersService : IGetBoardMembersService, ScopedInjection
         _boardRepository = boardRepository;
     }
 
-    public async Task<IEnumerable<BoardMemberResponseDto>> GetByBoardIdAsync(Guid boardId)
+    public async Task<IEnumerable<BoardMemberResponseDto>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
-        if (await _boardRepository.GetByIdAsync(boardId) == null)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (await _boardRepository.GetByIdAsync(boardId, cancellationToken) == null)
             throw new BusinessException("Board not found.");
 
-        var members = await _boardMemberRepository.GetByBoardIdAsync(boardId);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var members = await _boardMemberRepository.GetByBoardIdAsync(boardId, cancellationToken);
         return members.Select(BoardMemberMapping.ToResponse);
     }
 }

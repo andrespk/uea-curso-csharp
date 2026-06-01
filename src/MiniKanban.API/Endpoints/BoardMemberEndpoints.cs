@@ -11,9 +11,10 @@ public class BoardMemberEndpoints : IEndpoint
     {
         app.MapPost("/api/board-members", async (
             [FromBody] CreateBoardMemberDto request,
-            IAddBoardMemberService addBoardMemberService) =>
+            IAddBoardMemberService addBoardMemberService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await addBoardMemberService.AddAsync(request);
+            var result = await addBoardMemberService.AddAsync(request, cancellationToken);
             return Results.Created($"/api/board-members/{result.Id}", result);
         })
         .RequireAuthorization()
@@ -28,9 +29,10 @@ public class BoardMemberEndpoints : IEndpoint
 
         app.MapGet("/api/boards/{boardId:guid}/members", async (
             Guid boardId,
-            IGetBoardMembersService getBoardMembersService) =>
+            IGetBoardMembersService getBoardMembersService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await getBoardMembersService.GetByBoardIdAsync(boardId);
+            var result = await getBoardMembersService.GetByBoardIdAsync(boardId, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -46,9 +48,10 @@ public class BoardMemberEndpoints : IEndpoint
         app.MapPut("/api/board-members/{id:guid}", async (
             Guid id,
             [FromBody] UpdateBoardMemberDto request,
-            IUpdateBoardMemberService updateBoardMemberService) =>
+            IUpdateBoardMemberService updateBoardMemberService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await updateBoardMemberService.UpdateAsync(id, request);
+            var result = await updateBoardMemberService.UpdateAsync(id, request, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -63,9 +66,10 @@ public class BoardMemberEndpoints : IEndpoint
 
         app.MapDelete("/api/board-members/{id:guid}", async (
             Guid id,
-            IRemoveBoardMemberService removeBoardMemberService) =>
+            IRemoveBoardMemberService removeBoardMemberService,
+            CancellationToken cancellationToken) =>
         {
-            await removeBoardMemberService.RemoveAsync(id);
+            await removeBoardMemberService.RemoveAsync(id, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization()

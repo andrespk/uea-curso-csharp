@@ -12,23 +12,23 @@ public class BoardMemberRepository : Repository<BoardMember>, IBoardMemberReposi
     {
     }
 
-    public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId)
+    public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
             .Where(member => member.BoardId == boardId)
             .OrderBy(member => member.JoinedAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId)
+    public async Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
-            .FirstOrDefaultAsync(member => member.BoardId == boardId && member.UserId == userId);
+            .FirstOrDefaultAsync(member => member.BoardId == boardId && member.UserId == userId, cancellationToken);
     }
 
-    public async Task<bool> ExistsAsync(Guid boardId, Guid userId)
+    public async Task<bool> ExistsAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
-            .AnyAsync(member => member.BoardId == boardId && member.UserId == userId);
+            .AnyAsync(member => member.BoardId == boardId && member.UserId == userId, cancellationToken);
     }
 }

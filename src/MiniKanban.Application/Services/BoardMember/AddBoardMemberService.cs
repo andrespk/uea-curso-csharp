@@ -26,29 +26,28 @@ public class AddBoardMemberService : IAddBoardMemberService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardMemberResponseDto> AddAsync(CreateBoardMemberDto request)
+    public async Task<BoardMemberResponseDto> AddAsync(CreateBoardMemberDto request, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (request.Role == BoardRole.Owner)
             throw new BusinessException("Use board creation to define the owner.");
 
-        if (await _boardRepository.GetByIdAsync(request.BoardId) == null)
+        if (await _boardRepository.GetByIdAsync(request.BoardId, cancellationToken) == null)
             throw new BusinessException("Board not found.");
 
-        if (await _userRepository.GetByIdAsync(request.UserId) == null)
+        if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) == null)
             throw new BusinessException("User not found.");
 
-        if (await _boardMemberRepository.ExistsAsync(request.BoardId, request.UserId))
+        if (await _boardMemberRepository.ExistsAsync(request.BoardId, request.UserId, cancellationToken))
             throw new BusinessException("User is already a board member.");
 
-        var member = new BoardMember
-        {
-            BoardId = request.BoardId,
-            UserId = request.UserId,
-            Role = request.Role
-        };
+        cancellationToken.ThrowIfCancellationRequested();
 
-        await _boardMemberRepository.AddAsync(member);
-        await _unitOfWork.CommitAsync();
+        var member = BoardMemberMapping.ToEntity(request);
+
+        await _boardMemberRepository.AddAsync(member, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return BoardMemberMapping.ToResponse(member);
     }

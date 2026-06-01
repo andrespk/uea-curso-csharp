@@ -26,17 +26,16 @@ public class CreateBoardService : ICreateBoardService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardResponseDto> CreateAsync(CreateBoardDto request)
+    public async Task<BoardResponseDto> CreateAsync(CreateBoardDto request, CancellationToken cancellationToken = default)
     {
-        if (await _userRepository.GetByIdAsync(request.OwnerId) == null)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (await _userRepository.GetByIdAsync(request.OwnerId, cancellationToken) == null)
             throw new BusinessException("Owner user not found.");
 
-        var board = new Board
-        {
-            Name = request.Name,
-            Description = request.Description,
-            OwnerId = request.OwnerId
-        };
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var board = BoardMapping.ToEntity(request);
 
         var ownerMember = new BoardMember
         {
@@ -45,9 +44,9 @@ public class CreateBoardService : ICreateBoardService, ScopedInjection
             Role = BoardRole.Owner
         };
 
-        await _boardRepository.AddAsync(board);
-        await _boardMemberRepository.AddAsync(ownerMember);
-        await _unitOfWork.CommitAsync();
+        await _boardRepository.AddAsync(board, cancellationToken);
+        await _boardMemberRepository.AddAsync(ownerMember, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return BoardMapping.ToResponse(board);
     }

@@ -1,6 +1,5 @@
 using MiniKanban.Domain.Interfaces;
 using MiniKanban.Infrastructure.Data.Context;
-using MiniKanban.Infrastructure.Data.Interfaces;
 
 namespace MiniKanban.Infrastructure.Data;
 

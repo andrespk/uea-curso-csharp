@@ -1,4 +1,4 @@
-namespace MiniKanban.Infrastructure.Data.Interfaces;
+namespace MiniKanban.Domain.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

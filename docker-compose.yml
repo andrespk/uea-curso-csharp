@@ -1,0 +1,76 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  minikanban-db:
+    image: postgres:16
+    container_name: minikanban-db
+    environment:
+      POSTGRES_DB: minikanban
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/create-tables.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - minikanban-network
+    restart: unless-stopped
+
+  # .NET API
+  minikanban-api:
+    build:
+      context: ./src
+      dockerfile: MiniKanban.API/Dockerfile
+    container_name: minikanban-api
+    depends_on:
+      minikanban-db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Host=minikanban-db;Port=5432;Database=minikanban;Username=postgres;Password=postgres;"
+      Jwt__Key: "MiniKanbanSuperSecretKeyFor2026PleaseChangeThis123456789!@#$%^&*()"
+      Jwt__Issuer: "https://minikanban.local"
+      Jwt__Audience: "https://minikanban.local"
+    ports:
+      - "5093:8080"
+    networks:
+      - minikanban-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/swagger/v1/swagger.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # React Frontend
+  minikanban-web:
+    build:
+      context: ./src/MiniKanban.Web
+      dockerfile: Dockerfile
+    container_name: minikanban-web
+    depends_on:
+      - minikanban-api
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:5093
+    networks:
+      - minikanban-network
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  minikanban-network:
+    driver: bridge
+

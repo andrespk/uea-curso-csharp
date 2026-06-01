@@ -1,7 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MiniKanban.Application.Interfaces;
 using MiniKanban.Exceptions;
@@ -11,94 +11,106 @@ namespace MiniKanban.API.Handlers;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+
+    private static string StringifyProblemDetails(string logId, string message)
+        => JsonSerializer.Serialize(new { logId, message });
+
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
+
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
         CancellationToken cancellationToken)
     {
         var authorizationHeader = httpContext.Request.Headers["Authorization"].ToString();
-        if (!string.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        var invalidOrExpiredTokenDetails = new InvalidOrExpiredTokenException().Message;
+        var logId = Guid.NewGuid().ToString("N").Substring(0, 10);
+
+
+        if (!string.IsNullOrEmpty(authorizationHeader) &&
+            authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
             var token = authorizationHeader.Substring("Bearer ".Length).Trim();
             var tokenService = httpContext.RequestServices.GetRequiredService<ITokenService>();
 
             if (!tokenService.ValidateToken(token))
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("[ALERTA] Token inválido detectado no ExceptionHandler");
-                Console.ResetColor();
+                _logger.LogWarning("[ALERTA][{LogId}] {InvalidOrExpiredTokenDetails}", logId,
+                    invalidOrExpiredTokenDetails);
 
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
                 {
                     Status = StatusCodes.Status401Unauthorized,
                     Title = "Unauthorized",
-                    Detail = "Token de autenticação inválido ou expirado."
+                    Detail = StringifyProblemDetails(logId, invalidOrExpiredTokenDetails)
                 }, cancellationToken);
 
                 return true;
             }
         }
 
-        var isBusinessOrValidation = exception is BusinessException || exception is ValidationError;
+        var isBusinessOrValidationException = exception is BusinessException || exception is ValidationException;
         var isTokenException = exception is SecurityTokenException;
 
         if (isTokenException)
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[ALERTA] Falha de token: {exception.Message}");
-            if (exception.InnerException != null)
-            {
-                Console.WriteLine($"[ALERTA] Exceção Interna: {exception.InnerException.Message}");
-            }
-            Console.ResetColor();
-
+            _logger.LogWarning("[ALERTA][{LogId}] {Name} {ExceptionMessage}", nameof(SecurityTokenException), logId,
+                exception.Message);
             httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
             await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
             {
                 Status = StatusCodes.Status401Unauthorized,
                 Title = "Unauthorized",
-                Detail = "Token de autenticação inválido ou expirado."
+                Detail = StringifyProblemDetails(logId, invalidOrExpiredTokenDetails)
             }, cancellationToken);
 
             return true;
         }
 
-        if (!isBusinessOrValidation)
+        if (!isBusinessOrValidationException)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERRO] Exceção: {exception.Message}");
-            Console.WriteLine($"Stack Trace: {exception.StackTrace}");
+            var message =
+                $"[ERRO][{logId}] {exception.GetType().Name}: {exception.Message} | Stack Trace: {exception.StackTrace}";
+            _logger.LogError(exception, message);
+
             if (exception.InnerException != null)
             {
-                Console.WriteLine($"Exceção Interna: {exception.InnerException.Message}");
+                var innerMessage =
+                    $"[ERRO INTERNO][{logId}] {exception.InnerException.GetType().Name}: {exception.InnerException.Message}";
+                _logger.LogError(innerMessage);
             }
-            Console.ResetColor();
 
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Internal Server Error",
-                Detail = "An unexpected error occurred."
+                Detail = StringifyProblemDetails(logId, "Erro interno no servidor.")
             }, cancellationToken);
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[ALERTA] Exceção: {exception.Message}");
+            _logger.LogWarning("[ALERTA][{LogId}] {ExceptionMessage}", logId, exception.Message);
             if (exception.InnerException != null)
-            {
-                Console.WriteLine($"[ALERTA] Exceção Interna: {exception.InnerException.Message}");
-            }
-            Console.ResetColor();
+                _logger.LogWarning(
+                    "[ALERTA INTERNO][{LogId}] {InnerExceptionMessage}", logId, exception.InnerException.Message);
 
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            var message = exception is ValidationException validationException
+                ? string.Join("; ",
+                    validationException.ValidationResult.MemberNames.Select(m =>
+                        $"{m}: {validationException.ValidationResult.ErrorMessage}"))
+                : exception.Message;
             await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
             {
                 Status = StatusCodes.Status400BadRequest,
                 Title = "Bad Request",
-                Detail = exception.Message
+                Detail = StringifyProblemDetails(logId, message)
             }, cancellationToken);
         }
 

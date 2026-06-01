@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Abstractions;
 using MiniKanban.Infrastructure.Data.Context;
 
@@ -12,7 +13,8 @@ public class BoardMemberRepository : Repository<BoardMember>, IBoardMemberReposi
     {
     }
 
-    public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId,
+        CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
             .Where(member => member.BoardId == boardId)
@@ -20,7 +22,8 @@ public class BoardMemberRepository : Repository<BoardMember>, IBoardMemberReposi
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+    public async Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId,
+        CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
             .FirstOrDefaultAsync(member => member.BoardId == boardId && member.UserId == userId, cancellationToken);

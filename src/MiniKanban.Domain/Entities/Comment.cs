@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using MiniKanban.Domain.Entities.Abstractions;
+using MiniKanban.Domain.Abstractions;
 
 namespace MiniKanban.Domain.Entities;
 
@@ -11,6 +11,5 @@ public class Comment : BaseEntity
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;
 
-    [Required]
-    public string Content { get; set; } = string.Empty;
+    [Required] public string Content { get; set; } = string.Empty;
 }

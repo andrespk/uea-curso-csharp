@@ -1,24 +1,24 @@
 using System.Text;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MiniKanban.Infrastructure.Api;
-using MiniKanban.Domain.Entities;
-using MiniKanban.Application.Helpers;
-using MiniKanban.Infrastructure.Data.Context;
-using MiniKanban.Infrastructure.IoC;
-using MiniKanban.API.Handlers;
 using MiniKanban.API.Filters;
+using MiniKanban.API.Handlers;
+using MiniKanban.Domain.Entities;
+using MiniKanban.Infrastructure.Api;
+using MiniKanban.Infrastructure.Data.Context;
+using MiniKanban.Infrastructure.Helpers;
+using MiniKanban.Infrastructure.IoC;
 using Scalar.AspNetCore;
-using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Mapster globally to ignore null values when updating existing objects
-Mapster.TypeAdapterConfig.GlobalSettings.Default.IgnoreNullValues(true);
+TypeAdapterConfig.GlobalSettings.Default.IgnoreNullValues(true);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -29,7 +29,8 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "MiniKanban API",
         Version = "v1",
-        Description = "API de gerenciamento de quadros Kanban com suporte a colunas e tarefas. Inclui autenticação via JWT e persistência em PostgreSQL."
+        Description =
+            "API de gerenciamento de quadros Kanban com suporte a colunas e tarefas. Inclui autenticação via JWT e persistência em PostgreSQL."
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -37,7 +38,8 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        Description = "Informe apenas o token JWT retornado pelo endpoint de login. A UI enviara o cabecalho Authorization: Bearer <token>."
+        Description =
+            "Informe apenas o token JWT retornado pelo endpoint de login. A UI enviara o cabecalho Authorization: Bearer <token>."
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -57,28 +59,30 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+                       ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddInfrastructureServices(connectionString);
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt Key is missing.")))
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
+                                                                               throw new InvalidOperationException(
+                                                                                   "Jwt Key is missing.")))
+        };
+    });
 
 builder.Services.AddAuthorization();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -93,7 +97,7 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<MiniKanbanDbContext>();
-        
+
         var migrations = dbContext.Database.GetMigrations();
         if (migrations.Any())
         {
@@ -104,9 +108,9 @@ try
             var databaseCreator = dbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
             if (databaseCreator != null)
             {
-                if (!databaseCreator.Exists()) 
+                if (!databaseCreator.Exists())
                     await databaseCreator.CreateAsync();
-                
+
                 var tablesExist = false;
                 try
                 {
@@ -122,10 +126,7 @@ try
                     // Caso falhe (ex: tabela users não encontrada devido a mudança de schema), forçamos a criação
                 }
 
-                if (!tablesExist)
-                {
-                    await databaseCreator.CreateTablesAsync();
-                }
+                if (!tablesExist) await databaseCreator.CreateTablesAsync();
             }
         }
 
@@ -151,10 +152,8 @@ catch (Exception ex)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.MapScalarApiReference("/api-docs", options =>
-    {
-        options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json");
-    });
+    app.MapScalarApiReference("/api-docs",
+        options => { options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"); });
 }
 
 app.UseHttpsRedirection();

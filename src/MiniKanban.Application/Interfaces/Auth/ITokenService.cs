@@ -1,9 +1,7 @@
-using MiniKanban.Domain.Entities;
-
-namespace MiniKanban.Application.Interfaces;
+namespace MiniKanban.Application.Interfaces.Auth;
 
 public interface ITokenService
 {
-    string GenerateToken(User user);
+    string GenerateToken(Domain.Entities.User user);
     bool ValidateToken(string token);
 }

@@ -1,22 +1,21 @@
 using Mapster;
 using MiniKanban.Application.DTOs;
-using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.BoardMember;
 
 internal static class BoardMemberMapping
 {
-    public static BoardMemberResponseDto ToResponse(BoardMember member)
+    public static BoardMemberResponseDto ToResponse(Domain.Entities.BoardMember member)
     {
         return member.Adapt<BoardMemberResponseDto>();
     }
 
-    public static BoardMember ToEntity(CreateBoardMemberDto dto)
+    public static Domain.Entities.BoardMember ToEntity(CreateBoardMemberDto dto)
     {
-        return dto.Adapt<BoardMember>();
+        return dto.Adapt<Domain.Entities.BoardMember>();
     }
 
-    public static BoardMember ToEntity(UpdateBoardMemberDto dto, BoardMember entity)
+    public static Domain.Entities.BoardMember ToEntity(UpdateBoardMemberDto dto, Domain.Entities.BoardMember entity)
     {
         return dto.Adapt(entity);
     }

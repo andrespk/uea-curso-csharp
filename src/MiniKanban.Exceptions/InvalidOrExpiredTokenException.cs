@@ -2,5 +2,7 @@
 
 public class InvalidOrExpiredTokenException : Exception
 {
-    public  InvalidOrExpiredTokenException () : base ("Token de autenticação inválido ou expirado.") { }
+    public InvalidOrExpiredTokenException() : base("Token de autenticação inválido ou expirado.")
+    {
+    }
 }

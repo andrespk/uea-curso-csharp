@@ -1,14 +1,15 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.CardTag;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.CardTag;
 
 public class GetCardTagsService : IGetCardTagsService, ScopedInjection
 {
-    private readonly ICardTagRepository _cardTagRepository;
     private readonly ICardRepository _cardRepository;
+    private readonly ICardTagRepository _cardTagRepository;
 
     public GetCardTagsService(
         ICardTagRepository cardTagRepository,
@@ -18,7 +19,8 @@ public class GetCardTagsService : IGetCardTagsService, ScopedInjection
         _cardRepository = cardRepository;
     }
 
-    public async Task<IEnumerable<CardTagResponseDto>> GetByCardIdAsync(Guid cardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CardTagResponseDto>> GetByCardIdAsync(Guid cardId,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -29,4 +31,3 @@ public class GetCardTagsService : IGetCardTagsService, ScopedInjection
         return cardTags.Select(ct => CardTagMapping.ToResponse(ct));
     }
 }
-

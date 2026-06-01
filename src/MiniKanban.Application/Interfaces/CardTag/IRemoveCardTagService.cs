@@ -1,9 +1,6 @@
-using System.Threading;
-
-namespace MiniKanban.Application.Interfaces;
+namespace MiniKanban.Application.Interfaces.CardTag;
 
 public interface IRemoveCardTagService
 {
     Task RemoveAsync(Guid cardId, Guid tagId, CancellationToken cancellationToken = default);
 }
-

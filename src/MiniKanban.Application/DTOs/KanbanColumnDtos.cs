@@ -6,9 +6,7 @@ public class CreateKanbanColumnDto
 {
     public Guid BoardId { get; set; }
 
-    [Required]
-    [MaxLength(255)]
-    public string Name { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
     public int Order { get; set; }
     public int? WipLimit { get; set; }
@@ -16,8 +14,7 @@ public class CreateKanbanColumnDto
 
 public class UpdateKanbanColumnDto
 {
-    [MaxLength(255)]
-    public string? Name { get; set; }
+    [MaxLength(255)] public string? Name { get; set; }
 
     public int? Order { get; set; }
     public int? WipLimit { get; set; }

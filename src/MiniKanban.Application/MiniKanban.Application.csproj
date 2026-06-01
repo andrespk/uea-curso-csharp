@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MiniKanban.Domain\MiniKanban.Domain.csproj" />
-    <ProjectReference Include="..\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MiniKanban.Domain\MiniKanban.Domain.csproj"/>
+        <ProjectReference Include="..\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj"/>
+        <ProjectReference Include="..\MiniKanban.Infrastructure\MiniKanban.Infrastructure.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Mapster" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Mapster" Version="10.0.7"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1"/>
+    </ItemGroup>
 
 </Project>

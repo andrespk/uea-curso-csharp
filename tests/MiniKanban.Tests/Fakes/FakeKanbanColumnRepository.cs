@@ -1,5 +1,5 @@
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.Repositories;
 
 namespace MiniKanban.Tests.Fakes;
 
@@ -13,7 +13,8 @@ public class FakeKanbanColumnRepository : FakeRepository<KanbanColumn>, IKanbanC
     {
     }
 
-    public Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId,
+        CancellationToken cancellationToken = default)
     {
         return Task.FromResult<IEnumerable<KanbanColumn>>(
             SavedItems.Where(column => column.BoardId == boardId).OrderBy(column => column.Order).ToList());

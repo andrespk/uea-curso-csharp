@@ -1,7 +1,6 @@
-using System.Threading;
 using MiniKanban.Application.DTOs;
 
-namespace MiniKanban.Application.Interfaces;
+namespace MiniKanban.Application.Interfaces.Card;
 
 public interface IUpdateCardService
 {

@@ -1,16 +1,16 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Helpers;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Entities;
+using MiniKanban.Application.Interfaces.User;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.User;
 
 public class RegisterUserService : IRegisterUserService, ScopedInjection
 {
-    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     public RegisterUserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
     {
@@ -18,7 +18,8 @@ public class RegisterUserService : IRegisterUserService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<UserResponseDto> RegisterAsync(CreateUserDto request, CancellationToken cancellationToken = default)
+    public async Task<UserResponseDto> RegisterAsync(CreateUserDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

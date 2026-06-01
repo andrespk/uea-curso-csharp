@@ -1,14 +1,15 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.Comment;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Comment;
 
 public class GetCommentsByCardService : IGetCommentsByCardService, ScopedInjection
 {
-    private readonly ICommentRepository _commentRepository;
     private readonly ICardRepository _cardRepository;
+    private readonly ICommentRepository _commentRepository;
 
     public GetCommentsByCardService(
         ICommentRepository commentRepository,
@@ -18,7 +19,8 @@ public class GetCommentsByCardService : IGetCommentsByCardService, ScopedInjecti
         _cardRepository = cardRepository;
     }
 
-    public async Task<IEnumerable<CommentResponseDto>> GetByCardIdAsync(Guid cardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CommentResponseDto>> GetByCardIdAsync(Guid cardId,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -29,5 +31,3 @@ public class GetCommentsByCardService : IGetCommentsByCardService, ScopedInjecti
         return comments.Select(c => CommentMapping.ToResponse(c));
     }
 }
-
-

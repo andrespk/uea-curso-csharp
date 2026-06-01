@@ -1,8 +1,10 @@
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.Tag;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Tag;
 
 public class DeleteTagService : IDeleteTagService, ScopedInjection
 {
@@ -22,10 +24,9 @@ public class DeleteTagService : IDeleteTagService, ScopedInjection
         cancellationToken.ThrowIfCancellationRequested();
 
         var tag = await _tagRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Tag not found.");
+                  ?? throw new BusinessException("Tag not found.");
 
         await _tagRepository.DeleteAsync(tag, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 }
-

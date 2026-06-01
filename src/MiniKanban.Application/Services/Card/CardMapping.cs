@@ -1,22 +1,21 @@
 using Mapster;
 using MiniKanban.Application.DTOs;
-using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Card;
 
 internal static class CardMapping
 {
-    public static CardResponseDto ToResponse(Card card)
+    public static CardResponseDto ToResponse(Domain.Entities.Card card)
     {
         return card.Adapt<CardResponseDto>();
     }
 
-    public static Card ToEntity(CreateCardDto dto)
+    public static Domain.Entities.Card ToEntity(CreateCardDto dto)
     {
-        return dto.Adapt<Card>();
+        return dto.Adapt<Domain.Entities.Card>();
     }
 
-    public static Card ToEntity(UpdateCardDto dto, Card entity)
+    public static Domain.Entities.Card ToEntity(UpdateCardDto dto, Domain.Entities.Card entity)
     {
         return dto.Adapt(entity);
     }

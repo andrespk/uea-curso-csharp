@@ -1,14 +1,15 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.Tag;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Tag;
 
 public class GetTagsByBoardService : IGetTagsByBoardService, ScopedInjection
 {
-    private readonly ITagRepository _tagRepository;
     private readonly IBoardRepository _boardRepository;
+    private readonly ITagRepository _tagRepository;
 
     public GetTagsByBoardService(
         ITagRepository tagRepository,
@@ -18,7 +19,8 @@ public class GetTagsByBoardService : IGetTagsByBoardService, ScopedInjection
         _boardRepository = boardRepository;
     }
 
-    public async Task<IEnumerable<TagResponseDto>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TagResponseDto>> GetByBoardIdAsync(Guid boardId,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -29,4 +31,3 @@ public class GetTagsByBoardService : IGetTagsByBoardService, ScopedInjection
         return tags.Select(t => TagMapping.ToResponse(t));
     }
 }
-

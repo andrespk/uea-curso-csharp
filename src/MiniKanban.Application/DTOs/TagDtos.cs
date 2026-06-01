@@ -6,21 +6,16 @@ public class CreateTagDto
 {
     public Guid BoardId { get; set; }
 
-    [Required]
-    [MaxLength(255)]
-    public string Name { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
-    [MaxLength(50)]
-    public string? Color { get; set; }
+    [MaxLength(50)] public string? Color { get; set; }
 }
 
 public class UpdateTagDto
 {
-    [MaxLength(255)]
-    public string? Name { get; set; }
+    [MaxLength(255)] public string? Name { get; set; }
 
-    [MaxLength(50)]
-    public string? Color { get; set; }
+    [MaxLength(50)] public string? Color { get; set; }
 }
 
 public class TagResponseDto

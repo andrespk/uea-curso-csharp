@@ -1,9 +1,10 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.User;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.User;
 
 public class GetUserByIdService : IGetUserByIdService, ScopedInjection
 {
@@ -19,7 +20,7 @@ public class GetUserByIdService : IGetUserByIdService, ScopedInjection
         cancellationToken.ThrowIfCancellationRequested();
 
         var user = await _userRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("User not found.");
+                   ?? throw new BusinessException("User not found.");
 
         return UserMapping.ToResponse(user);
     }

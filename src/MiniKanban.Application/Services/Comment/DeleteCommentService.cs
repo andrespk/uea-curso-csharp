@@ -1,8 +1,10 @@
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.Comment;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Comment;
 
 public class DeleteCommentService : IDeleteCommentService, ScopedInjection
 {
@@ -22,10 +24,9 @@ public class DeleteCommentService : IDeleteCommentService, ScopedInjection
         cancellationToken.ThrowIfCancellationRequested();
 
         var comment = await _commentRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Comment not found.");
+                      ?? throw new BusinessException("Comment not found.");
 
         await _commentRepository.DeleteAsync(comment, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 }
-

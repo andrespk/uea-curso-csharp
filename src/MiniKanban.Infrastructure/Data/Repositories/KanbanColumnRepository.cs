@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Abstractions;
 using MiniKanban.Infrastructure.Data.Context;
 
@@ -12,7 +13,8 @@ public class KanbanColumnRepository : Repository<KanbanColumn>, IKanbanColumnRep
     {
     }
 
-    public async Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId,
+        CancellationToken cancellationToken = default)
     {
         return await Context.KanbanColumns
             .Where(column => column.BoardId == boardId)

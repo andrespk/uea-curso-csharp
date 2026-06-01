@@ -1,5 +1,5 @@
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.Repositories;
 
 namespace MiniKanban.Tests.Fakes;
 

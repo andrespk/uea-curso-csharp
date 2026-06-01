@@ -1,8 +1,8 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Services;
+using MiniKanban.Application.Services.Board;
 using MiniKanban.Domain.Entities;
 using MiniKanban.Domain.Enums;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Exceptions;
 using MiniKanban.Tests.Fakes;
 
 namespace MiniKanban.Tests.Services;
@@ -12,7 +12,8 @@ public class BoardServiceTests
     [Fact]
     public async Task CreateAsync_WhenOwnerExists_CreatesBoardAndOwnerMembership()
     {
-        var owner = new User { Name = "Owner", Username = "owner", Email = "owner@example.com", PasswordHash = "hash", Role = "User" };
+        var owner = new User
+            { Name = "Owner", Username = "owner", Email = "owner@example.com", PasswordHash = "hash", Role = "User" };
         var boardRepository = new FakeBoardRepository();
         var memberRepository = new FakeBoardMemberRepository();
         var unitOfWork = new FakeUnitOfWork();

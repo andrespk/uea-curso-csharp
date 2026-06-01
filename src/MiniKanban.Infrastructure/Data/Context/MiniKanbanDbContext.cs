@@ -24,5 +24,3 @@ public class MiniKanbanDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MiniKanbanDbContext).Assembly);
     }
 }
-
-

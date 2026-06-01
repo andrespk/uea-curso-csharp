@@ -1,4 +1,5 @@
 using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
 using MiniKanban.Infrastructure.Data.Context;
 
 namespace MiniKanban.Infrastructure.Data;

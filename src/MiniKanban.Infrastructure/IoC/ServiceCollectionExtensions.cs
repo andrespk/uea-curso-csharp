@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
 using MiniKanban.Infrastructure.Data.Context;
 
 namespace MiniKanban.Infrastructure.IoC;
@@ -9,7 +9,7 @@ namespace MiniKanban.Infrastructure.IoC;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructureServices(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         string connectionString)
     {
         services.AddDbContext<MiniKanbanDbContext>(options =>
@@ -20,9 +20,7 @@ public static class ServiceCollectionExtensions
         {
             var referencedAssemblies = entryAssembly.GetReferencedAssemblies();
             foreach (var assemblyName in referencedAssemblies)
-            {
                 if (assemblyName.Name != null && assemblyName.Name.StartsWith("MiniKanban"))
-                {
                     try
                     {
                         Assembly.Load(assemblyName);
@@ -30,8 +28,6 @@ public static class ServiceCollectionExtensions
                     catch
                     {
                     }
-                }
-            }
         }
 
         var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -54,24 +50,21 @@ public static class ServiceCollectionExtensions
                     if (type.IsGenericType)
                     {
                         var backtickIndex = type.Name.IndexOf('`');
-                        if (backtickIndex > 0)
-                        {
-                            cleanTypeName = type.Name.Substring(0, backtickIndex);
-                        }
+                        if (backtickIndex > 0) cleanTypeName = type.Name.Substring(0, backtickIndex);
                     }
+
                     var genericInterfaceName = "I" + cleanTypeName;
 
                     var matchingInterface = type.GetInterfaces()
-                        .FirstOrDefault(i => {
+                        .FirstOrDefault(i =>
+                        {
                             var name = i.Name;
                             if (i.IsGenericType)
                             {
                                 var idx = i.Name.IndexOf('`');
-                                if (idx > 0)
-                                {
-                                    name = i.Name.Substring(0, idx);
-                                }
+                                if (idx > 0) name = i.Name.Substring(0, idx);
                             }
+
                             return name == genericInterfaceName;
                         });
 
@@ -83,32 +76,18 @@ public static class ServiceCollectionExtensions
                             var openInterface = matchingInterface.GetGenericTypeDefinition();
 
                             if (isScoped)
-                            {
                                 services.AddScoped(openInterface, openType);
-                            }
                             else if (isSingleton)
-                            {
                                 services.AddSingleton(openInterface, openType);
-                            }
-                            else if (isTransient)
-                            {
-                                services.AddTransient(openInterface, openType);
-                            }
+                            else if (isTransient) services.AddTransient(openInterface, openType);
                         }
                         else
                         {
                             if (isScoped)
-                            {
                                 services.AddScoped(matchingInterface, type);
-                            }
                             else if (isSingleton)
-                            {
                                 services.AddSingleton(matchingInterface, type);
-                            }
-                            else if (isTransient)
-                            {
-                                services.AddTransient(matchingInterface, type);
-                            }
+                            else if (isTransient) services.AddTransient(matchingInterface, type);
                         }
                     }
                 }

@@ -1,18 +1,19 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Entities;
+using MiniKanban.Application.Interfaces.Board;
 using MiniKanban.Domain.Enums;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Board;
 
 public class CreateBoardService : ICreateBoardService, ScopedInjection
 {
-    private readonly IBoardRepository _boardRepository;
     private readonly IBoardMemberRepository _boardMemberRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IBoardRepository _boardRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     public CreateBoardService(
         IBoardRepository boardRepository,
@@ -26,7 +27,8 @@ public class CreateBoardService : ICreateBoardService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardResponseDto> CreateAsync(CreateBoardDto request, CancellationToken cancellationToken = default)
+    public async Task<BoardResponseDto> CreateAsync(CreateBoardDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -37,7 +39,7 @@ public class CreateBoardService : ICreateBoardService, ScopedInjection
 
         var board = BoardMapping.ToEntity(request);
 
-        var ownerMember = new BoardMember
+        var ownerMember = new Domain.Entities.BoardMember
         {
             BoardId = board.Id,
             UserId = request.OwnerId,

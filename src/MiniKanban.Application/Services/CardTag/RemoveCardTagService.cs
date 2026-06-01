@@ -1,13 +1,15 @@
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.CardTag;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.CardTag;
 
 public class RemoveCardTagService : IRemoveCardTagService, ScopedInjection
 {
-    private readonly ICardTagRepository _cardTagRepository;
     private readonly ICardRepository _cardRepository;
+    private readonly ICardTagRepository _cardTagRepository;
     private readonly ITagRepository _tagRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -40,4 +42,3 @@ public class RemoveCardTagService : IRemoveCardTagService, ScopedInjection
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 }
-

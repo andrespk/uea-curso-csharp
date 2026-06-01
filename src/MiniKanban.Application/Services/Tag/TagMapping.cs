@@ -1,24 +1,22 @@
 using Mapster;
 using MiniKanban.Application.DTOs;
-using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Tag;
 
 internal static class TagMapping
 {
-    public static TagResponseDto ToResponse(Tag tag)
+    public static TagResponseDto ToResponse(Domain.Entities.Tag tag)
     {
         return tag.Adapt<TagResponseDto>();
     }
 
-    public static Tag ToEntity(CreateTagDto dto)
+    public static Domain.Entities.Tag ToEntity(CreateTagDto dto)
     {
-        return dto.Adapt<Tag>();
+        return dto.Adapt<Domain.Entities.Tag>();
     }
 
-    public static Tag ToEntity(UpdateTagDto dto, Tag entity)
+    public static Domain.Entities.Tag ToEntity(UpdateTagDto dto, Domain.Entities.Tag entity)
     {
         return dto.Adapt(entity);
     }
 }
-

@@ -1,7 +1,6 @@
-using System.Threading;
 using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Domain.Interfaces;
+namespace MiniKanban.Domain.Interfaces.Repositories;
 
 public interface ICardRepository : IRepository<Card>
 {

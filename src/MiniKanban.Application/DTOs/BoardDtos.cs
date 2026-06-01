@@ -4,9 +4,7 @@ namespace MiniKanban.Application.DTOs;
 
 public class CreateBoardDto
 {
-    [Required]
-    [MaxLength(255)]
-    public string Name { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
     public string? Description { get; set; }
     public Guid OwnerId { get; set; }
@@ -14,8 +12,7 @@ public class CreateBoardDto
 
 public class UpdateBoardDto
 {
-    [MaxLength(255)]
-    public string? Name { get; set; }
+    [MaxLength(255)] public string? Name { get; set; }
 
     public string? Description { get; set; }
 }

@@ -7,14 +7,12 @@ public class CreateCommentDto
     public Guid CardId { get; set; }
     public Guid UserId { get; set; }
 
-    [Required]
-    public string Content { get; set; } = string.Empty;
+    [Required] public string Content { get; set; } = string.Empty;
 }
 
 public class UpdateCommentDto
 {
-    [Required]
-    public string Content { get; set; } = string.Empty;
+    [Required] public string Content { get; set; } = string.Empty;
 }
 
 public class CommentResponseDto

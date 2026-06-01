@@ -1,22 +1,25 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.KanbanColumn;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.KanbanColumn;
 
 public class GetKanbanColumnsByBoardService : IGetKanbanColumnsByBoardService, ScopedInjection
 {
-    private readonly IKanbanColumnRepository _kanbanColumnRepository;
     private readonly IBoardRepository _boardRepository;
+    private readonly IKanbanColumnRepository _kanbanColumnRepository;
 
-    public GetKanbanColumnsByBoardService(IKanbanColumnRepository kanbanColumnRepository, IBoardRepository boardRepository)
+    public GetKanbanColumnsByBoardService(IKanbanColumnRepository kanbanColumnRepository,
+        IBoardRepository boardRepository)
     {
         _kanbanColumnRepository = kanbanColumnRepository;
         _boardRepository = boardRepository;
     }
 
-    public async Task<IEnumerable<KanbanColumnResponseDto>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<KanbanColumnResponseDto>> GetByBoardIdAsync(Guid boardId,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

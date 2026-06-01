@@ -1,9 +1,10 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.BoardMember;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.BoardMember;
 
 public class GetBoardMembersService : IGetBoardMembersService, ScopedInjection
 {
@@ -16,7 +17,8 @@ public class GetBoardMembersService : IGetBoardMembersService, ScopedInjection
         _boardRepository = boardRepository;
     }
 
-    public async Task<IEnumerable<BoardMemberResponseDto>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<BoardMemberResponseDto>> GetByBoardIdAsync(Guid boardId,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

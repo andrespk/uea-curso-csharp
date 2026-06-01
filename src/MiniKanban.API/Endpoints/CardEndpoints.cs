@@ -71,5 +71,23 @@ public class CardEndpoints : IEndpoint
         .Produces(400)
         .Produces(401)
         .WithOpenApi();
+
+        app.MapDelete("/api/cards/{id:guid}", async (
+            Guid id,
+            IDeleteCardService deleteCardService,
+            CancellationToken cancellationToken) =>
+        {
+            await deleteCardService.DeleteAsync(id, cancellationToken);
+            return Results.NoContent();
+        })
+        .RequireAuthorization()
+        .WithName("DeleteCard")
+        .WithSummary("Deleta card")
+        .WithDescription("Remove um card existente.")
+        .WithTags("Cards")
+        .Produces(204)
+        .Produces(400)
+        .Produces(401)
+        .WithOpenApi();
     }
 }

@@ -78,6 +78,20 @@ Esta API adota o **Scalar** como a ferramenta principal de visualização da doc
 *   **URL da Documentação:** [http://localhost:5093/api-docs](http://localhost:5093/api-docs)
 *   **JSON da Especificação OpenAPI:** [http://localhost:5093/swagger/v1/swagger.json](http://localhost:5093/swagger/v1/swagger.json)
 
+### Como autenticar no Scalar
+
+1. Execute a API e acesse [http://localhost:5093/api-docs](http://localhost:5093/api-docs).
+2. Use o endpoint público `POST /api/auth/login`.
+3. Copie o valor do campo `token` retornado.
+4. No Scalar, abra a opção de autenticação/autorização da documentação.
+5. Selecione o esquema **Bearer** e cole apenas o token JWT, sem escrever `Bearer` antes.
+
+A documentação OpenAPI está configurada com o esquema `HTTP Bearer`, então a UI envia automaticamente o cabeçalho:
+
+```http
+Authorization: Bearer <TOKEN>
+```
+
 ### 💡 Destaque: Filtro de Exceções Customizado
 
 A documentação integra perfeitamente as respostas de erro HTTP devido ao `ExceptionResponseOperationFilter`. 
@@ -90,7 +104,7 @@ Isso garante que todos os retornos do [GlobalExceptionHandler](src/MiniKanban.AP
 
 ---
 
-## 🔑 Acesso Rápido para Testes
+## 🔑 Acesso Rápido para Testes Manuais
 
 Para testar os endpoints protegidos, você pode obter um token JWT efetuando o login.
 
@@ -113,3 +127,88 @@ Para testar os endpoints protegidos, você pode obter um token JWT efetuando o l
 ```
 Use o token retornado como cabeçalho de autenticação `Authorization: Bearer <TOKEN>` para acessar o endpoint de teste:
 *   `GET /api/protected`
+
+Também é possível criar uma nova conta pelo endpoint público:
+
+**Endpoint:** `POST /api/auth/register`
+
+```json
+{
+  "name": "Maria Silva",
+  "username": "maria",
+  "email": "maria@kanban.com",
+  "password": "Password123",
+  "role": "User"
+}
+```
+
+---
+
+## 🔓 Endpoints Públicos e Protegidos
+
+### Públicos
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `POST` | `/api/auth/register` | Cria um novo usuário com senha armazenada em hash. |
+| `POST` | `/api/auth/login` | Autentica usuário e retorna token JWT. |
+
+### Protegidos por JWT
+
+Todos os endpoints abaixo exigem o cabeçalho `Authorization: Bearer <TOKEN>`.
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `GET` | `/api/me` | Retorna os dados do usuário autenticado. |
+| `GET` | `/api/protected` | Endpoint simples para validar se o token está funcionando. |
+| `GET` | `/api/users` | Lista usuários cadastrados sem expor hash de senha. |
+| `GET` | `/api/users/{id}` | Busca usuário por ID. |
+| `POST` | `/api/boards` | Cria board para o usuário autenticado. O `OwnerId` vem do token. |
+| `GET` | `/api/boards` | Lista boards em que o usuário autenticado participa. |
+| `GET` | `/api/boards/{id}` | Busca board por ID. |
+| `GET` | `/api/users/{ownerId}/boards/owned` | Lista boards criados por um usuário. |
+| `PUT` | `/api/boards/{id}` | Atualiza nome e descrição de um board. |
+| `DELETE` | `/api/boards/{id}` | Remove board. |
+| `POST` | `/api/board-members` | Adiciona usuário como membro de um board. |
+| `GET` | `/api/boards/{boardId}/members` | Lista membros de um board. |
+| `PUT` | `/api/board-members/{id}` | Atualiza o papel de um membro. |
+| `DELETE` | `/api/board-members/{id}` | Remove membro de um board. |
+| `POST` | `/api/kanban-columns` | Cria coluna em um board. |
+| `GET` | `/api/boards/{boardId}/kanban-columns` | Lista colunas de um board. |
+| `PUT` | `/api/kanban-columns/{id}` | Atualiza nome, ordem e WIP limit de uma coluna. |
+| `DELETE` | `/api/kanban-columns/{id}` | Remove coluna Kanban. |
+
+---
+
+## 📌 Regras Implementadas Até Agora
+
+*   Ao criar um board, o usuário autenticado vira automaticamente membro com role `Owner`.
+*   Não é permitido adicionar o mesmo usuário duas vezes ao mesmo board.
+*   Não é permitido adicionar `Owner` manualmente por `/api/board-members`.
+*   Não é permitido remover o membro `Owner` do board.
+*   Não é permitido alterar a role `Owner` pelo endpoint de membros.
+*   Ao criar coluna, a API valida se o board existe.
+*   A ordem da coluna não pode ser negativa.
+*   O WIP limit não pode ser negativo.
+*   A ordem da coluna deve ser única dentro do board no momento da criação.
+
+---
+
+## ✅ Testes Unitários
+
+O projeto possui testes unitários para os services já implementados em `MiniKanban.Tests`.
+
+Para executar:
+
+```bash
+cd src
+dotnet test MiniKanban.Tests/MiniKanban.Tests.csproj --no-restore -p:UseSharedCompilation=false -m:1
+```
+
+Cobertura atual:
+
+*   Registro de usuário.
+*   Validação de username/email duplicado.
+*   Criação, atualização, busca e remoção de board.
+*   Adição, atualização e remoção de membros.
+*   Criação e atualização de colunas Kanban.

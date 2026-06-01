@@ -26,6 +26,39 @@ public class AuthEndpoints : IEndpoint
         .Produces(401)
         .WithOpenApi();
 
+        app.MapPost("/api/auth/register", async ([FromBody] CreateUserDto request, IRegisterUserService registerUserService) =>
+        {
+            var result = await registerUserService.RegisterAsync(request);
+            return Results.Created($"/api/users/{result.Id}", result);
+        })
+        .WithName("Register")
+        .WithSummary("Registra um novo usuário")
+        .WithDescription("Cria uma conta de usuário com senha armazenada em hash.")
+        .WithTags("Autenticação")
+        .Produces<UserResponseDto>(201)
+        .Produces(400)
+        .WithOpenApi();
+
+        app.MapGet("/api/me", async (HttpContext httpContext, IGetUserByIdService getUserByIdService) =>
+        {
+            var userId = httpContext.User.GetUserId();
+            if (userId == null)
+            {
+                return Results.Unauthorized();
+            }
+
+            var result = await getUserByIdService.GetByIdAsync(userId.Value);
+            return Results.Ok(result);
+        })
+        .RequireAuthorization()
+        .WithName("GetCurrentUser")
+        .WithSummary("Retorna o usuário autenticado")
+        .WithDescription("Retorna os dados do usuário identificado pelo token JWT.")
+        .WithTags("Autenticação")
+        .Produces<UserResponseDto>(200)
+        .Produces(401)
+        .WithOpenApi();
+
         app.MapGet("/api/protected", () =>
         {
             return Results.Ok(new { Message = "Access granted to protected endpoint!" });

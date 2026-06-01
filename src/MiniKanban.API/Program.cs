@@ -103,8 +103,25 @@ try
                 if (!databaseCreator.Exists()) 
                     await databaseCreator.CreateAsync();
                 
-                if (!databaseCreator.HasTables()) 
+                var tablesExist = false;
+                try
+                {
+                    if (databaseCreator.HasTables())
+                    {
+                        // Faz uma consulta de teste simples para confirmar se as tabelas do modelo atual (ex: users) existem
+                        await dbContext.Users.AnyAsync();
+                        tablesExist = true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // Caso falhe (ex: tabela users não encontrada devido a mudança de schema), forçamos a criação
+                }
+
+                if (!tablesExist)
+                {
                     await databaseCreator.CreateTablesAsync();
+                }
             }
         }
 

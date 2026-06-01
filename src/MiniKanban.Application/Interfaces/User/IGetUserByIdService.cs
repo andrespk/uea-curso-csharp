@@ -1,8 +1,9 @@
+using System.Threading;
 using MiniKanban.Application.DTOs;
 
 namespace MiniKanban.Application.Interfaces;
 
 public interface IGetUserByIdService
 {
-    Task<UserResponseDto> GetByIdAsync(Guid id);
+    Task<UserResponseDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }

@@ -12,23 +12,23 @@ public class UserRepository : Repository<User>, IUserRepository, ScopedInjection
     {
     }
 
-    public async Task<User?> GetByEmailAsync(string email)
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<User>().FirstOrDefaultAsync(u => u.Email == email);
+        return await Context.Set<User>().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
-    public async Task<User?> GetByUsernameAsync(string username)
+    public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<User>().FirstOrDefaultAsync(u => u.Username == username);
+        return await Context.Set<User>().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
     }
 
-    public async Task<bool> EmailExistsAsync(string email)
+    public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<User>().AnyAsync(u => u.Email == email);
+        return await Context.Set<User>().AnyAsync(u => u.Email == email, cancellationToken);
     }
 
-    public async Task<bool> UsernameExistsAsync(string username)
+    public async Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<User>().AnyAsync(u => u.Username == username);
+        return await Context.Set<User>().AnyAsync(u => u.Username == username, cancellationToken);
     }
 }

@@ -19,29 +19,29 @@ public abstract class FakeRepository<TEntity> : IRepository<TEntity>
 
     public IReadOnlyList<TEntity> SavedItems => Items;
 
-    public Task<TEntity?> GetByIdAsync(Guid id)
+    public Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(Items.FirstOrDefault(item => item.Id == id));
     }
 
-    public Task<IEnumerable<TEntity>> GetAllAsync()
+    public Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult<IEnumerable<TEntity>>(Items.ToList());
     }
 
-    public Task AddAsync(TEntity entity)
+    public Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         Items.Add(entity);
         return Task.CompletedTask;
     }
 
-    public Task AddRangeAsync(IEnumerable<TEntity> entities)
+    public Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         Items.AddRange(entities);
         return Task.CompletedTask;
     }
 
-    public Task UpdateAsync(TEntity entity)
+    public Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var index = Items.FindIndex(item => item.Id == entity.Id);
         if (index >= 0)
@@ -50,25 +50,25 @@ public abstract class FakeRepository<TEntity> : IRepository<TEntity>
         return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(TEntity entity)
+    public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         Items.RemoveAll(item => item.Id == entity.Id);
         return Task.CompletedTask;
     }
 
-    public Task DeleteRangeAsync(IEnumerable<TEntity> entities)
+    public Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         var ids = entities.Select(entity => entity.Id).ToHashSet();
         Items.RemoveAll(item => ids.Contains(item.Id));
         return Task.CompletedTask;
     }
 
-    public Task<bool> ExistsAsync(Guid id)
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(Items.Any(item => item.Id == id));
     }
 
-    public Task<int> CountAsync()
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(Items.Count);
     }

@@ -13,9 +13,11 @@ public class GetUsersService : IGetUsersService, ScopedInjection
         _userRepository = userRepository;
     }
 
-    public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
+    public async Task<IEnumerable<UserResponseDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository.GetAllAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var users = await _userRepository.GetAllAsync(cancellationToken);
         return users.Select(UserMapping.ToResponse);
     }
 }

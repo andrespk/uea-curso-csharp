@@ -14,9 +14,11 @@ public class GetUserByIdService : IGetUserByIdService, ScopedInjection
         _userRepository = userRepository;
     }
 
-    public async Task<UserResponseDto> GetByIdAsync(Guid id)
+    public async Task<UserResponseDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("User not found.");
 
         return UserMapping.ToResponse(user);

@@ -16,15 +16,19 @@ public class RemoveBoardMemberService : IRemoveBoardMemberService, ScopedInjecti
         _unitOfWork = unitOfWork;
     }
 
-    public async Task RemoveAsync(Guid id)
+    public async Task RemoveAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var member = await _boardMemberRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var member = await _boardMemberRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Board member not found.");
 
         if (member.Role == BoardRole.Owner)
             throw new BusinessException("Board owner cannot be removed from members.");
 
-        await _boardMemberRepository.DeleteAsync(member);
-        await _unitOfWork.CommitAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _boardMemberRepository.DeleteAsync(member, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

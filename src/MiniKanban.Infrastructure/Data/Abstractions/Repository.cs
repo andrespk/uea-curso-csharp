@@ -15,52 +15,52 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         DbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(Guid id)
+    public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await DbSet.FindAsync(id);
+        return await DbSet.FindAsync(new object[] { id }, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await DbSet.ToListAsync();
+        return await DbSet.ToListAsync(cancellationToken);
     }
 
-    public virtual async Task AddAsync(TEntity entity)
+    public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        await DbSet.AddAsync(entity);
+        await DbSet.AddAsync(entity, cancellationToken);
     }
 
-    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities)
+    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        await DbSet.AddRangeAsync(entities);
+        await DbSet.AddRangeAsync(entities, cancellationToken);
     }
 
-    public virtual async Task UpdateAsync(TEntity entity)
+    public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         DbSet.Update(entity);
         await Task.CompletedTask;
     }
 
-    public virtual async Task DeleteAsync(TEntity entity)
+    public virtual async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         DbSet.Remove(entity);
         await Task.CompletedTask;
     }
 
-    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities)
+    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         DbSet.RemoveRange(entities);
         await Task.CompletedTask;
     }
 
-    public virtual async Task<bool> ExistsAsync(Guid id)
+    public virtual async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await GetByIdAsync(id);
+        var entity = await GetByIdAsync(id, cancellationToken);
         return entity != null;
     }
 
-    public virtual async Task<int> CountAsync()
+    public virtual async Task<int> CountAsync(CancellationToken cancellationToken = default)
     {
-        return await DbSet.CountAsync();
+        return await DbSet.CountAsync(cancellationToken);
     }
 }

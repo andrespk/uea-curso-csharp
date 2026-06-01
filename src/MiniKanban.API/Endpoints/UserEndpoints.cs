@@ -8,9 +8,9 @@ public class UserEndpoints : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/users", async (IGetUsersService getUsersService) =>
+        app.MapGet("/api/users", async (IGetUsersService getUsersService, CancellationToken cancellationToken) =>
         {
-            var result = await getUsersService.GetAllAsync();
+            var result = await getUsersService.GetAllAsync(cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -22,9 +22,9 @@ public class UserEndpoints : IEndpoint
         .Produces(401)
         .WithOpenApi();
 
-        app.MapGet("/api/users/{id:guid}", async (Guid id, IGetUserByIdService getUserByIdService) =>
+        app.MapGet("/api/users/{id:guid}", async (Guid id, IGetUserByIdService getUserByIdService, CancellationToken cancellationToken) =>
         {
-            var result = await getUserByIdService.GetByIdAsync(id);
+            var result = await getUserByIdService.GetByIdAsync(id, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()

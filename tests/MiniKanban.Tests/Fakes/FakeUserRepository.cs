@@ -13,22 +13,22 @@ public class FakeUserRepository : FakeRepository<User>, IUserRepository
     {
     }
 
-    public Task<User?> GetByEmailAsync(string email)
+    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.FirstOrDefault(user => user.Email == email));
     }
 
-    public Task<User?> GetByUsernameAsync(string username)
+    public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.FirstOrDefault(user => user.Username == username));
     }
 
-    public Task<bool> EmailExistsAsync(string email)
+    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.Any(user => user.Email == email));
     }
 
-    public Task<bool> UsernameExistsAsync(string username)
+    public Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.Any(user => user.Username == username));
     }

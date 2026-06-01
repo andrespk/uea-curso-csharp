@@ -13,13 +13,13 @@ public class FakeKanbanColumnRepository : FakeRepository<KanbanColumn>, IKanbanC
     {
     }
 
-    public Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId)
+    public Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
         return Task.FromResult<IEnumerable<KanbanColumn>>(
             SavedItems.Where(column => column.BoardId == boardId).OrderBy(column => column.Order).ToList());
     }
 
-    public Task<bool> OrderExistsAsync(Guid boardId, int order)
+    public Task<bool> OrderExistsAsync(Guid boardId, int order, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.Any(column => column.BoardId == boardId && column.Order == order));
     }

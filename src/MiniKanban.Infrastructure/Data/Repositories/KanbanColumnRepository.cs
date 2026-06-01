@@ -12,17 +12,17 @@ public class KanbanColumnRepository : Repository<KanbanColumn>, IKanbanColumnRep
     {
     }
 
-    public async Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId)
+    public async Task<IEnumerable<KanbanColumn>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
         return await Context.KanbanColumns
             .Where(column => column.BoardId == boardId)
             .OrderBy(column => column.Order)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> OrderExistsAsync(Guid boardId, int order)
+    public async Task<bool> OrderExistsAsync(Guid boardId, int order, CancellationToken cancellationToken = default)
     {
         return await Context.KanbanColumns
-            .AnyAsync(column => column.BoardId == boardId && column.Order == order);
+            .AnyAsync(column => column.BoardId == boardId && column.Order == order, cancellationToken);
     }
 }

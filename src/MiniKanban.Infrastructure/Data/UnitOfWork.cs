@@ -12,9 +12,9 @@ public class UnitOfWork : IUnitOfWork, ScopedInjection
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<int> CommitAsync()
+    public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 
     public void Dispose()

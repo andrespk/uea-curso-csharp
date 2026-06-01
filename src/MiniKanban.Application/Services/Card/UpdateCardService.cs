@@ -27,52 +27,45 @@ public class UpdateCardService : IUpdateCardService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<CardResponseDto> UpdateAsync(Guid id, UpdateCardDto request)
+    public async Task<CardResponseDto> UpdateAsync(Guid id, UpdateCardDto request, CancellationToken cancellationToken = default)
     {
-        var card = await _cardRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var card = await _cardRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Card not found.");
 
-        var column = await _kanbanColumnRepository.GetByIdAsync(request.ColumnId ?? card.ColumnId)
+        var column = await _kanbanColumnRepository.GetByIdAsync(request.ColumnId ?? card.ColumnId, cancellationToken)
             ?? throw new BusinessException("Kanban column not found.");
 
         if (request.ColumnId.HasValue && request.ColumnId.Value != card.ColumnId && column.WipLimit.HasValue)
         {
-            var cardsInColumn = await _cardRepository.CountByColumnIdAsync(column.Id);
+            var cardsInColumn = await _cardRepository.CountByColumnIdAsync(column.Id, cancellationToken);
             if (cardsInColumn >= column.WipLimit.Value)
                 throw new BusinessException("Column WIP limit reached.");
         }
 
         if (request.AssignedToUserId.HasValue)
         {
-            if (await _userRepository.GetByIdAsync(request.AssignedToUserId.Value) == null)
+            if (await _userRepository.GetByIdAsync(request.AssignedToUserId.Value, cancellationToken) == null)
                 throw new BusinessException("Assigned user not found.");
 
-            if (!await _boardMemberRepository.ExistsAsync(column.BoardId, request.AssignedToUserId.Value))
+            if (!await _boardMemberRepository.ExistsAsync(column.BoardId, request.AssignedToUserId.Value, cancellationToken))
                 throw new BusinessException("Assigned user is not a board member.");
         }
 
-        if (request.ColumnId.HasValue)
-            card.ColumnId = request.ColumnId.Value;
+        cancellationToken.ThrowIfCancellationRequested();
 
-        if (request.AssignedToUserId.HasValue)
-            card.AssignedToUserId = request.AssignedToUserId;
-
-        if (!string.IsNullOrWhiteSpace(request.Title))
-            card.Title = request.Title;
-
-        if (request.Description != null)
-            card.Description = request.Description;
-
-        if (request.Priority.HasValue)
-            card.Priority = request.Priority.Value;
-
-        if (request.DueDate.HasValue)
-            card.DueDate = request.DueDate;
+        var originalTitle = card.Title;
+        CardMapping.ToEntity(request, card);
+        if (string.IsNullOrWhiteSpace(card.Title))
+        {
+            card.Title = originalTitle;
+        }
 
         card.UpdatedAt = DateTime.UtcNow;
 
-        await _cardRepository.UpdateAsync(card);
-        await _unitOfWork.CommitAsync();
+        await _cardRepository.UpdateAsync(card, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return CardMapping.ToResponse(card);
     }

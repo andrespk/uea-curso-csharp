@@ -16,13 +16,17 @@ public class LoginService : ILoginService, ScopedInjection
         _tokenService = tokenService;
     }
 
-    public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto request)
+    public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByUsernameAsync(request.Username);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
         if (user == null || !PasswordHasher.Verify(request.Password, user.PasswordHash))
         {
             return null;
         }
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         var token = _tokenService.GenerateToken(user);
         return new LoginResponseDto

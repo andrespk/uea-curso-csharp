@@ -1,6 +1,8 @@
+using System.Threading;
+
 namespace MiniKanban.Domain.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {
-    Task<int> CommitAsync();
+    Task<int> CommitAsync(CancellationToken cancellationToken = default);
 }

@@ -13,7 +13,7 @@ public class FakeBoardMemberRepository : FakeRepository<BoardMember>, IBoardMemb
     {
     }
 
-    public Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId)
+    public Task<IEnumerable<BoardMember>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
         var members = boardId == Guid.Empty
             ? SavedItems
@@ -22,12 +22,12 @@ public class FakeBoardMemberRepository : FakeRepository<BoardMember>, IBoardMemb
         return Task.FromResult<IEnumerable<BoardMember>>(members);
     }
 
-    public Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId)
+    public Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.FirstOrDefault(member => member.BoardId == boardId && member.UserId == userId));
     }
 
-    public Task<bool> ExistsAsync(Guid boardId, Guid userId)
+    public Task<bool> ExistsAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(SavedItems.Any(member => member.BoardId == boardId && member.UserId == userId));
     }

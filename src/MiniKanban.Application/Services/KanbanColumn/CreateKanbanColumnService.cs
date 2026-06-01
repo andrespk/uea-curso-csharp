@@ -22,30 +22,28 @@ public class CreateKanbanColumnService : ICreateKanbanColumnService, ScopedInjec
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<KanbanColumnResponseDto> CreateAsync(CreateKanbanColumnDto request)
+    public async Task<KanbanColumnResponseDto> CreateAsync(CreateKanbanColumnDto request, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (request.Order < 0)
             throw new BusinessException("Column order cannot be negative.");
 
         if (request.WipLimit is < 0)
             throw new BusinessException("WIP limit cannot be negative.");
 
-        if (await _boardRepository.GetByIdAsync(request.BoardId) == null)
+        if (await _boardRepository.GetByIdAsync(request.BoardId, cancellationToken) == null)
             throw new BusinessException("Board not found.");
 
-        if (await _kanbanColumnRepository.OrderExistsAsync(request.BoardId, request.Order))
+        if (await _kanbanColumnRepository.OrderExistsAsync(request.BoardId, request.Order, cancellationToken))
             throw new BusinessException("Column order already exists for this board.");
 
-        var column = new KanbanColumn
-        {
-            BoardId = request.BoardId,
-            Name = request.Name,
-            Order = request.Order,
-            WipLimit = request.WipLimit
-        };
+        cancellationToken.ThrowIfCancellationRequested();
 
-        await _kanbanColumnRepository.AddAsync(column);
-        await _unitOfWork.CommitAsync();
+        var column = KanbanColumnMapping.ToEntity(request);
+
+        await _kanbanColumnRepository.AddAsync(column, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return KanbanColumnMapping.ToResponse(column);
     }

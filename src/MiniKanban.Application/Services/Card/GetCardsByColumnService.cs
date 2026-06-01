@@ -16,12 +16,16 @@ public class GetCardsByColumnService : IGetCardsByColumnService, ScopedInjection
         _kanbanColumnRepository = kanbanColumnRepository;
     }
 
-    public async Task<IEnumerable<CardResponseDto>> GetByColumnIdAsync(Guid columnId)
+    public async Task<IEnumerable<CardResponseDto>> GetByColumnIdAsync(Guid columnId, CancellationToken cancellationToken = default)
     {
-        if (await _kanbanColumnRepository.GetByIdAsync(columnId) == null)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (await _kanbanColumnRepository.GetByIdAsync(columnId, cancellationToken) == null)
             throw new BusinessException("Kanban column not found.");
 
-        var cards = await _cardRepository.GetByColumnIdAsync(columnId);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var cards = await _cardRepository.GetByColumnIdAsync(columnId, cancellationToken);
         return cards.Select(CardMapping.ToResponse);
     }
 }

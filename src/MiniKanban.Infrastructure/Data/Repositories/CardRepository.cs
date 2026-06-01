@@ -12,25 +12,25 @@ public class CardRepository : Repository<Card>, ICardRepository, ScopedInjection
     {
     }
 
-    public async Task<IEnumerable<Card>> GetByColumnIdAsync(Guid columnId)
+    public async Task<IEnumerable<Card>> GetByColumnIdAsync(Guid columnId, CancellationToken cancellationToken = default)
     {
         return await Context.Cards
             .Where(card => card.ColumnId == columnId)
             .OrderByDescending(card => card.CreatedAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Card>> GetByBoardIdAsync(Guid boardId)
+    public async Task<IEnumerable<Card>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
         return await Context.Cards
             .Include(card => card.Column)
             .Where(card => card.Column.BoardId == boardId)
             .OrderByDescending(card => card.CreatedAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> CountByColumnIdAsync(Guid columnId)
+    public async Task<int> CountByColumnIdAsync(Guid columnId, CancellationToken cancellationToken = default)
     {
-        return await Context.Cards.CountAsync(card => card.ColumnId == columnId);
+        return await Context.Cards.CountAsync(card => card.ColumnId == columnId, cancellationToken);
     }
 }

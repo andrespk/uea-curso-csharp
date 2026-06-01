@@ -11,9 +11,10 @@ public class KanbanColumnEndpoints : IEndpoint
     {
         app.MapPost("/api/kanban-columns", async (
             [FromBody] CreateKanbanColumnDto request,
-            ICreateKanbanColumnService createKanbanColumnService) =>
+            ICreateKanbanColumnService createKanbanColumnService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await createKanbanColumnService.CreateAsync(request);
+            var result = await createKanbanColumnService.CreateAsync(request, cancellationToken);
             return Results.Created($"/api/kanban-columns/{result.Id}", result);
         })
         .RequireAuthorization()
@@ -28,9 +29,10 @@ public class KanbanColumnEndpoints : IEndpoint
 
         app.MapGet("/api/boards/{boardId:guid}/kanban-columns", async (
             Guid boardId,
-            IGetKanbanColumnsByBoardService getKanbanColumnsByBoardService) =>
+            IGetKanbanColumnsByBoardService getKanbanColumnsByBoardService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await getKanbanColumnsByBoardService.GetByBoardIdAsync(boardId);
+            var result = await getKanbanColumnsByBoardService.GetByBoardIdAsync(boardId, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -46,9 +48,10 @@ public class KanbanColumnEndpoints : IEndpoint
         app.MapPut("/api/kanban-columns/{id:guid}", async (
             Guid id,
             [FromBody] UpdateKanbanColumnDto request,
-            IUpdateKanbanColumnService updateKanbanColumnService) =>
+            IUpdateKanbanColumnService updateKanbanColumnService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await updateKanbanColumnService.UpdateAsync(id, request);
+            var result = await updateKanbanColumnService.UpdateAsync(id, request, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -63,9 +66,10 @@ public class KanbanColumnEndpoints : IEndpoint
 
         app.MapDelete("/api/kanban-columns/{id:guid}", async (
             Guid id,
-            IDeleteKanbanColumnService deleteKanbanColumnService) =>
+            IDeleteKanbanColumnService deleteKanbanColumnService,
+            CancellationToken cancellationToken) =>
         {
-            await deleteKanbanColumnService.DeleteAsync(id);
+            await deleteKanbanColumnService.DeleteAsync(id, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization()

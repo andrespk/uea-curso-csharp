@@ -9,9 +9,9 @@ public class AuthEndpoints : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/auth/login", async ([FromBody] LoginRequestDto request, ILoginService loginService) =>
+        app.MapPost("/api/auth/login", async ([FromBody] LoginRequestDto request, ILoginService loginService, CancellationToken cancellationToken) =>
         {
-            var result = await loginService.LoginAsync(request);
+            var result = await loginService.LoginAsync(request, cancellationToken);
             if (result == null)
             {
                 return Results.Unauthorized();
@@ -26,9 +26,9 @@ public class AuthEndpoints : IEndpoint
         .Produces(401)
         .WithOpenApi();
 
-        app.MapPost("/api/auth/register", async ([FromBody] CreateUserDto request, IRegisterUserService registerUserService) =>
+        app.MapPost("/api/auth/register", async ([FromBody] CreateUserDto request, IRegisterUserService registerUserService, CancellationToken cancellationToken) =>
         {
-            var result = await registerUserService.RegisterAsync(request);
+            var result = await registerUserService.RegisterAsync(request, cancellationToken);
             return Results.Created($"/api/users/{result.Id}", result);
         })
         .WithName("Register")
@@ -39,7 +39,7 @@ public class AuthEndpoints : IEndpoint
         .Produces(400)
         .WithOpenApi();
 
-        app.MapGet("/api/me", async (HttpContext httpContext, IGetUserByIdService getUserByIdService) =>
+        app.MapGet("/api/me", async (HttpContext httpContext, IGetUserByIdService getUserByIdService, CancellationToken cancellationToken) =>
         {
             var userId = httpContext.User.GetUserId();
             if (userId == null)
@@ -47,7 +47,7 @@ public class AuthEndpoints : IEndpoint
                 return Results.Unauthorized();
             }
 
-            var result = await getUserByIdService.GetByIdAsync(userId.Value);
+            var result = await getUserByIdService.GetByIdAsync(userId.Value, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()

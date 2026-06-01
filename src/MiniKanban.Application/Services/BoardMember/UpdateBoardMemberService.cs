@@ -17,9 +17,11 @@ public class UpdateBoardMemberService : IUpdateBoardMemberService, ScopedInjecti
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardMemberResponseDto> UpdateAsync(Guid id, UpdateBoardMemberDto request)
+    public async Task<BoardMemberResponseDto> UpdateAsync(Guid id, UpdateBoardMemberDto request, CancellationToken cancellationToken = default)
     {
-        var member = await _boardMemberRepository.GetByIdAsync(id)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var member = await _boardMemberRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new BusinessException("Board member not found.");
 
         if (member.Role == BoardRole.Owner && request.Role != BoardRole.Owner)
@@ -28,11 +30,13 @@ public class UpdateBoardMemberService : IUpdateBoardMemberService, ScopedInjecti
         if (request.Role == BoardRole.Owner && member.Role != BoardRole.Owner)
             throw new BusinessException("A new owner cannot be assigned here.");
 
-        member.Role = request.Role;
+        cancellationToken.ThrowIfCancellationRequested();
+
+        BoardMemberMapping.ToEntity(request, member);
         member.UpdatedAt = DateTime.UtcNow;
 
-        await _boardMemberRepository.UpdateAsync(member);
-        await _unitOfWork.CommitAsync();
+        await _boardMemberRepository.UpdateAsync(member, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return BoardMemberMapping.ToResponse(member);
     }

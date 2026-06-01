@@ -16,12 +16,16 @@ public class GetKanbanColumnsByBoardService : IGetKanbanColumnsByBoardService, S
         _boardRepository = boardRepository;
     }
 
-    public async Task<IEnumerable<KanbanColumnResponseDto>> GetByBoardIdAsync(Guid boardId)
+    public async Task<IEnumerable<KanbanColumnResponseDto>> GetByBoardIdAsync(Guid boardId, CancellationToken cancellationToken = default)
     {
-        if (await _boardRepository.GetByIdAsync(boardId) == null)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (await _boardRepository.GetByIdAsync(boardId, cancellationToken) == null)
             throw new BusinessException("Board not found.");
 
-        var columns = await _kanbanColumnRepository.GetByBoardIdAsync(boardId);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var columns = await _kanbanColumnRepository.GetByBoardIdAsync(boardId, cancellationToken);
         return columns.Select(KanbanColumnMapping.ToResponse);
     }
 }

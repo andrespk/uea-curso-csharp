@@ -18,25 +18,22 @@ public class RegisterUserService : IRegisterUserService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<UserResponseDto> RegisterAsync(CreateUserDto request)
+    public async Task<UserResponseDto> RegisterAsync(CreateUserDto request, CancellationToken cancellationToken = default)
     {
-        if (await _userRepository.UsernameExistsAsync(request.Username))
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (await _userRepository.UsernameExistsAsync(request.Username, cancellationToken))
             throw new BusinessException("Username already exists.");
 
-        if (await _userRepository.EmailExistsAsync(request.Email))
+        if (await _userRepository.EmailExistsAsync(request.Email, cancellationToken))
             throw new BusinessException("Email already exists.");
 
-        var user = new User
-        {
-            Name = request.Name,
-            Username = request.Username,
-            Email = request.Email,
-            PasswordHash = PasswordHasher.Hash(request.Password),
-            Role = string.IsNullOrWhiteSpace(request.Role) ? "User" : request.Role
-        };
+        cancellationToken.ThrowIfCancellationRequested();
 
-        await _userRepository.AddAsync(user);
-        await _unitOfWork.CommitAsync();
+        var user = UserMapping.ToEntity(request);
+
+        await _userRepository.AddAsync(user, cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return UserMapping.ToResponse(user);
     }

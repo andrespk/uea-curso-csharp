@@ -22,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniKanban.Application\MiniKanban.Application.csproj" />
-    <ProjectReference Include="..\MiniKanban.Domain\MiniKanban.Domain.csproj" />
-    <ProjectReference Include="..\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj" />
+    <ProjectReference Include="..\..\src\MiniKanban.Application\MiniKanban.Application.csproj" />
+    <ProjectReference Include="..\..\src\MiniKanban.Domain\MiniKanban.Domain.csproj" />
+    <ProjectReference Include="..\..\src\MiniKanban.Exceptions\MiniKanban.Exceptions.csproj" />
   </ItemGroup>
 
 </Project>

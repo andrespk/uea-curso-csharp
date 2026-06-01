@@ -12,20 +12,20 @@ public class BoardRepository : Repository<Board>, IBoardRepository, ScopedInject
     {
     }
 
-    public async Task<IEnumerable<Board>> GetByOwnerIdAsync(Guid ownerId)
+    public async Task<IEnumerable<Board>> GetByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
     {
         return await Context.Boards
             .Where(board => board.OwnerId == ownerId)
             .OrderBy(board => board.Name)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Board>> GetByMemberUserIdAsync(Guid userId)
+    public async Task<IEnumerable<Board>> GetByMemberUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
             .Where(member => member.UserId == userId)
             .Select(member => member.Board)
             .OrderBy(board => board.Name)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

@@ -11,12 +11,9 @@
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "jsx": "react-jsx",
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo"
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx"
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.app.json" }]
+  "include": ["src", "vite.config.ts"]
 }
-

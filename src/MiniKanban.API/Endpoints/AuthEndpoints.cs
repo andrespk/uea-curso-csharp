@@ -58,17 +58,5 @@ public class AuthEndpoints : IEndpoint
             .Produces<UserResponseDto>()
             .Produces(401)
             .WithOpenApi();
-
-        app.MapGet("/api/protected",
-                () => { return Results.Ok(new { Message = "Access granted to protected endpoint!" }); })
-            .RequireAuthorization()
-            .WithName("Protected")
-            .WithSummary("Acessa endpoint protegido")
-            .WithDescription(
-                "Retorna uma mensagem de confirmação para testar se o token JWT fornecido no cabeçalho Authorization é válido.")
-            .WithTags("Autenticação")
-            .Produces(200)
-            .Produces(401)
-            .WithOpenApi();
     }
 }

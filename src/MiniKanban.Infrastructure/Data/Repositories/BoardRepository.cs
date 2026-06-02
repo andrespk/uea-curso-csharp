@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Abstractions;
 using MiniKanban.Infrastructure.Data.Context;
 
@@ -20,7 +21,8 @@ public class BoardRepository : Repository<Board>, IBoardRepository, ScopedInject
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Board>> GetByMemberUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Board>> GetByMemberUserIdAsync(Guid userId,
+        CancellationToken cancellationToken = default)
     {
         return await Context.BoardMembers
             .Where(member => member.UserId == userId)

@@ -1,8 +1,9 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Application.Interfaces.User;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.User;
 
 public class GetUsersService : IGetUsersService, ScopedInjection
 {

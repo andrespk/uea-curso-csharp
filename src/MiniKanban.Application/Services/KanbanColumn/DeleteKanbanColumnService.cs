@@ -1,8 +1,10 @@
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.KanbanColumn;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.KanbanColumn;
 
 public class DeleteKanbanColumnService : IDeleteKanbanColumnService, ScopedInjection
 {
@@ -20,7 +22,7 @@ public class DeleteKanbanColumnService : IDeleteKanbanColumnService, ScopedInjec
         cancellationToken.ThrowIfCancellationRequested();
 
         var column = await _kanbanColumnRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Kanban column not found.");
+                     ?? throw new BusinessException("Kanban column not found.");
 
         cancellationToken.ThrowIfCancellationRequested();
 

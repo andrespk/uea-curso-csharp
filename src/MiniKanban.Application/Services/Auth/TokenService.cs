@@ -3,11 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.Auth;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Auth;
 
 public class TokenService : ITokenService, ScopedInjection
 {
@@ -18,10 +17,11 @@ public class TokenService : ITokenService, ScopedInjection
         _configuration = configuration;
     }
 
-    public string GenerateToken(User user)
+    public string GenerateToken(Domain.Entities.User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured."));
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ??
+                                         throw new InvalidOperationException("JWT Key not configured."));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -34,7 +34,8 @@ public class TokenService : ITokenService, ScopedInjection
             Expires = DateTime.UtcNow.AddHours(2),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
@@ -42,13 +43,11 @@ public class TokenService : ITokenService, ScopedInjection
 
     public bool ValidateToken(string token)
     {
-        if (string.IsNullOrEmpty(token))
-        {
-            return false;
-        }
+        if (string.IsNullOrEmpty(token)) return false;
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured."));
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ??
+                                         throw new InvalidOperationException("JWT Key not configured."));
 
         try
         {

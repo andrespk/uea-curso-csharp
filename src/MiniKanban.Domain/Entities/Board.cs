@@ -1,13 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using MiniKanban.Domain.Entities.Abstractions;
+using MiniKanban.Domain.Abstractions;
 
 namespace MiniKanban.Domain.Entities;
 
 public class Board : BaseEntity
 {
-    [Required]
-    [MaxLength(255)]
-    public string Name { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Name { get; set; } = string.Empty;
 
     public string? Description { get; set; }
 

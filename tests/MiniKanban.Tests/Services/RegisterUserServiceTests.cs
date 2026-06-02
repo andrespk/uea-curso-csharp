@@ -1,7 +1,7 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Services;
+using MiniKanban.Application.Services.User;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Exceptions;
 using MiniKanban.Tests.Fakes;
 
 namespace MiniKanban.Tests.Services;
@@ -37,7 +37,10 @@ public class RegisterUserServiceTests
     {
         var userRepository = new FakeUserRepository(new[]
         {
-            new User { Name = "Maria", Username = "maria", Email = "maria@example.com", PasswordHash = "hash", Role = "User" }
+            new User
+            {
+                Name = "Maria", Username = "maria", Email = "maria@example.com", PasswordHash = "hash", Role = "User"
+            }
         });
         var service = new RegisterUserService(userRepository, new FakeUnitOfWork());
 
@@ -56,7 +59,10 @@ public class RegisterUserServiceTests
     {
         var userRepository = new FakeUserRepository(new[]
         {
-            new User { Name = "Maria", Username = "maria", Email = "maria@example.com", PasswordHash = "hash", Role = "User" }
+            new User
+            {
+                Name = "Maria", Username = "maria", Email = "maria@example.com", PasswordHash = "hash", Role = "User"
+            }
         });
         var service = new RegisterUserService(userRepository, new FakeUnitOfWork());
 

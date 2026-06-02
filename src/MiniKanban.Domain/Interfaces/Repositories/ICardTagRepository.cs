@@ -1,7 +1,6 @@
-using System.Threading;
 using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Domain.Interfaces;
+namespace MiniKanban.Domain.Interfaces.Repositories;
 
 public interface ICardTagRepository : IRepository<CardTag>
 {
@@ -9,4 +8,3 @@ public interface ICardTagRepository : IRepository<CardTag>
     Task<bool> ExistsAsync(Guid cardId, Guid tagId, CancellationToken cancellationToken = default);
     Task DeleteByCardAndTagAsync(Guid cardId, Guid tagId, CancellationToken cancellationToken = default);
 }
-

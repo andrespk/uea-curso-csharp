@@ -1,9 +1,10 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Application.Interfaces.Card;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Card;
 
 public class GetCardsByColumnService : IGetCardsByColumnService, ScopedInjection
 {
@@ -16,7 +17,8 @@ public class GetCardsByColumnService : IGetCardsByColumnService, ScopedInjection
         _kanbanColumnRepository = kanbanColumnRepository;
     }
 
-    public async Task<IEnumerable<CardResponseDto>> GetByColumnIdAsync(Guid columnId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CardResponseDto>> GetByColumnIdAsync(Guid columnId,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

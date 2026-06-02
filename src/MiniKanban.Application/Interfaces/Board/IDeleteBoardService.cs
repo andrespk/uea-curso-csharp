@@ -1,6 +1,4 @@
-using System.Threading;
-
-namespace MiniKanban.Application.Interfaces;
+namespace MiniKanban.Application.Interfaces.Board;
 
 public interface IDeleteBoardService
 {

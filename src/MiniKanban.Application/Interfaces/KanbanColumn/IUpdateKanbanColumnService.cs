@@ -1,9 +1,9 @@
-using System.Threading;
 using MiniKanban.Application.DTOs;
 
-namespace MiniKanban.Application.Interfaces;
+namespace MiniKanban.Application.Interfaces.KanbanColumn;
 
 public interface IUpdateKanbanColumnService
 {
-    Task<KanbanColumnResponseDto> UpdateAsync(Guid id, UpdateKanbanColumnDto request, CancellationToken cancellationToken = default);
+    Task<KanbanColumnResponseDto> UpdateAsync(Guid id, UpdateKanbanColumnDto request,
+        CancellationToken cancellationToken = default);
 }

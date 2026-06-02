@@ -1,4 +1,4 @@
-using MiniKanban.Domain.Entities.Abstractions;
+using MiniKanban.Domain.Abstractions;
 using MiniKanban.Domain.Enums;
 
 namespace MiniKanban.Domain.Entities;

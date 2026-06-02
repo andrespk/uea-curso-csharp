@@ -1,7 +1,7 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Services;
+using MiniKanban.Application.Services.KanbanColumn;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Exceptions;
 using MiniKanban.Tests.Fakes;
 
 namespace MiniKanban.Tests.Services;

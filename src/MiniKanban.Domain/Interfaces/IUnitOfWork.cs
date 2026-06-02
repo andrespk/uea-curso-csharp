@@ -1,5 +1,3 @@
-using System.Threading;
-
 namespace MiniKanban.Domain.Interfaces;
 
 public interface IUnitOfWork : IDisposable

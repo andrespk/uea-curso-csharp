@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Abstractions;
 using MiniKanban.Infrastructure.Data.Context;
 
@@ -12,7 +13,8 @@ public class CardRepository : Repository<Card>, ICardRepository, ScopedInjection
     {
     }
 
-    public async Task<IEnumerable<Card>> GetByColumnIdAsync(Guid columnId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Card>> GetByColumnIdAsync(Guid columnId,
+        CancellationToken cancellationToken = default)
     {
         return await Context.Cards
             .Where(card => card.ColumnId == columnId)

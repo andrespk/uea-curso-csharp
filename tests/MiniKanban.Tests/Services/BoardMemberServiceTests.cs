@@ -1,8 +1,8 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Services;
+using MiniKanban.Application.Services.BoardMember;
 using MiniKanban.Domain.Entities;
 using MiniKanban.Domain.Enums;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Exceptions;
 using MiniKanban.Tests.Fakes;
 
 namespace MiniKanban.Tests.Services;
@@ -13,7 +13,8 @@ public class BoardMemberServiceTests
     public async Task AddAsync_WhenDataIsValid_AddsMemberAndCommits()
     {
         var board = new Board { Name = "Board", OwnerId = Guid.NewGuid() };
-        var user = new User { Name = "Ana", Username = "ana", Email = "ana@example.com", PasswordHash = "hash", Role = "User" };
+        var user = new User
+            { Name = "Ana", Username = "ana", Email = "ana@example.com", PasswordHash = "hash", Role = "User" };
         var memberRepository = new FakeBoardMemberRepository();
         var unitOfWork = new FakeUnitOfWork();
         var service = new AddBoardMemberService(
@@ -43,7 +44,14 @@ public class BoardMemberServiceTests
         var service = new AddBoardMemberService(
             new FakeBoardMemberRepository(new[] { new BoardMember { BoardId = boardId, UserId = userId } }),
             new FakeBoardRepository(new[] { new Board { Id = boardId, Name = "Board", OwnerId = Guid.NewGuid() } }),
-            new FakeUserRepository(new[] { new User { Id = userId, Name = "Ana", Username = "ana", Email = "ana@example.com", PasswordHash = "hash", Role = "User" } }),
+            new FakeUserRepository(new[]
+            {
+                new User
+                {
+                    Id = userId, Name = "Ana", Username = "ana", Email = "ana@example.com", PasswordHash = "hash",
+                    Role = "User"
+                }
+            }),
             new FakeUnitOfWork());
 
         await Assert.ThrowsAsync<BusinessException>(() => service.AddAsync(new CreateBoardMemberDto

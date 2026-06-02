@@ -1,10 +1,12 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.BoardMember;
 using MiniKanban.Domain.Enums;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.BoardMember;
 
 public class UpdateBoardMemberService : IUpdateBoardMemberService, ScopedInjection
 {
@@ -17,12 +19,13 @@ public class UpdateBoardMemberService : IUpdateBoardMemberService, ScopedInjecti
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardMemberResponseDto> UpdateAsync(Guid id, UpdateBoardMemberDto request, CancellationToken cancellationToken = default)
+    public async Task<BoardMemberResponseDto> UpdateAsync(Guid id, UpdateBoardMemberDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var member = await _boardMemberRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Board member not found.");
+                     ?? throw new BusinessException("Board member not found.");
 
         if (member.Role == BoardRole.Owner && request.Role != BoardRole.Owner)
             throw new BusinessException("Board owner role cannot be changed here.");

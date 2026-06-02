@@ -1,9 +1,11 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.KanbanColumn;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.KanbanColumn;
 
 public class UpdateKanbanColumnService : IUpdateKanbanColumnService, ScopedInjection
 {
@@ -16,12 +18,13 @@ public class UpdateKanbanColumnService : IUpdateKanbanColumnService, ScopedInjec
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<KanbanColumnResponseDto> UpdateAsync(Guid id, UpdateKanbanColumnDto request, CancellationToken cancellationToken = default)
+    public async Task<KanbanColumnResponseDto> UpdateAsync(Guid id, UpdateKanbanColumnDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var column = await _kanbanColumnRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Kanban column not found.");
+                     ?? throw new BusinessException("Kanban column not found.");
 
         if (request.Order.HasValue && request.Order.Value < 0)
             throw new BusinessException("Column order cannot be negative.");
@@ -33,10 +36,7 @@ public class UpdateKanbanColumnService : IUpdateKanbanColumnService, ScopedInjec
 
         var originalName = column.Name;
         KanbanColumnMapping.ToEntity(request, column);
-        if (string.IsNullOrWhiteSpace(column.Name))
-        {
-            column.Name = originalName;
-        }
+        if (string.IsNullOrWhiteSpace(column.Name)) column.Name = originalName;
 
         column.UpdatedAt = DateTime.UtcNow;
 

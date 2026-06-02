@@ -1,24 +1,22 @@
 using Mapster;
 using MiniKanban.Application.DTOs;
-using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Comment;
 
 internal static class CommentMapping
 {
-    public static CommentResponseDto ToResponse(Comment comment)
+    public static CommentResponseDto ToResponse(Domain.Entities.Comment comment)
     {
         return comment.Adapt<CommentResponseDto>();
     }
 
-    public static Comment ToEntity(CreateCommentDto dto)
+    public static Domain.Entities.Comment ToEntity(CreateCommentDto dto)
     {
-        return dto.Adapt<Comment>();
+        return dto.Adapt<Domain.Entities.Comment>();
     }
 
-    public static Comment ToEntity(UpdateCommentDto dto, Comment entity)
+    public static Domain.Entities.Comment ToEntity(UpdateCommentDto dto, Domain.Entities.Comment entity)
     {
         return dto.Adapt(entity);
     }
 }
-

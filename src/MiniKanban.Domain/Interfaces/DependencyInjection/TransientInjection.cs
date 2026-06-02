@@ -1,4 +1,4 @@
-namespace MiniKanban.Domain.Interfaces;
+namespace MiniKanban.Domain.Interfaces.DependencyInjection;
 
 public interface TransientInjection
 {

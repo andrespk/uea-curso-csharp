@@ -8,9 +8,7 @@ public class CreateCardDto
     public Guid CreatedByUserId { get; set; }
     public Guid? AssignedToUserId { get; set; }
 
-    [Required]
-    [MaxLength(255)]
-    public string Title { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Title { get; set; } = string.Empty;
 
     public string? Description { get; set; }
     public int Priority { get; set; }
@@ -22,8 +20,7 @@ public class UpdateCardDto
     public Guid? ColumnId { get; set; }
     public Guid? AssignedToUserId { get; set; }
 
-    [MaxLength(255)]
-    public string? Title { get; set; }
+    [MaxLength(255)] public string? Title { get; set; }
 
     public string? Description { get; set; }
     public int? Priority { get; set; }

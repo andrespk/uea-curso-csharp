@@ -1,15 +1,16 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Entities;
+using MiniKanban.Application.Interfaces.KanbanColumn;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.KanbanColumn;
 
 public class CreateKanbanColumnService : ICreateKanbanColumnService, ScopedInjection
 {
-    private readonly IKanbanColumnRepository _kanbanColumnRepository;
     private readonly IBoardRepository _boardRepository;
+    private readonly IKanbanColumnRepository _kanbanColumnRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateKanbanColumnService(
@@ -22,7 +23,8 @@ public class CreateKanbanColumnService : ICreateKanbanColumnService, ScopedInjec
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<KanbanColumnResponseDto> CreateAsync(CreateKanbanColumnDto request, CancellationToken cancellationToken = default)
+    public async Task<KanbanColumnResponseDto> CreateAsync(CreateKanbanColumnDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

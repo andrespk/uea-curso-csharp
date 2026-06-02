@@ -1,4 +1,4 @@
-namespace MiniKanban.Domain.Entities.Abstractions;
+namespace MiniKanban.Domain.Abstractions;
 
 public abstract class BaseEntity
 {

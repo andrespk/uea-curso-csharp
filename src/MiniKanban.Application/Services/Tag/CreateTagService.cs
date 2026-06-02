@@ -1,15 +1,16 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Entities;
+using MiniKanban.Application.Interfaces.Tag;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Tag;
 
 public class CreateTagService : ICreateTagService, ScopedInjection
 {
-    private readonly ITagRepository _tagRepository;
     private readonly IBoardRepository _boardRepository;
+    private readonly ITagRepository _tagRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateTagService(
@@ -39,4 +40,3 @@ public class CreateTagService : ICreateTagService, ScopedInjection
         return TagMapping.ToResponse(tag);
     }
 }
-

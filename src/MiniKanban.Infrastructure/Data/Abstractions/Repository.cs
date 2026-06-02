@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Context;
 
 namespace MiniKanban.Infrastructure.Data.Abstractions;
@@ -30,7 +30,8 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         await DbSet.AddAsync(entity, cancellationToken);
     }
 
-    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         await DbSet.AddRangeAsync(entities, cancellationToken);
     }
@@ -47,7 +48,8 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         await Task.CompletedTask;
     }
 
-    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task DeleteRangeAsync(IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         DbSet.RemoveRange(entities);
         await Task.CompletedTask;

@@ -1,19 +1,17 @@
 using Mapster;
 using MiniKanban.Application.DTOs;
-using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.CardTag;
 
 internal static class CardTagMapping
 {
-    public static CardTagResponseDto ToResponse(CardTag cardTag)
+    public static CardTagResponseDto ToResponse(Domain.Entities.CardTag cardTag)
     {
         return cardTag.Adapt<CardTagResponseDto>();
     }
 
-    public static CardTag ToEntity(CreateCardTagDto dto)
+    public static Domain.Entities.CardTag ToEntity(CreateCardTagDto dto)
     {
-        return dto.Adapt<CardTag>();
+        return dto.Adapt<Domain.Entities.CardTag>();
     }
 }
-

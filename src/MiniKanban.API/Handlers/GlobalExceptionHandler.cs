@@ -3,18 +3,14 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.Auth;
 using MiniKanban.Exceptions;
-using MiniKanban.Exceptions.Users;
 
 namespace MiniKanban.API.Handlers;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
-
-    private static string StringifyProblemDetails(string logId, string message)
-        => JsonSerializer.Serialize(new { logId, message });
 
     public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
     {
@@ -75,6 +71,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             {
                 // Ignora falhas de escrita se a conexão já estiver fechada
             }
+
             return true;
         }
 
@@ -136,5 +133,10 @@ public class GlobalExceptionHandler : IExceptionHandler
         }
 
         return true;
+    }
+
+    private static string StringifyProblemDetails(string logId, string message)
+    {
+        return JsonSerializer.Serialize(new { logId, message });
     }
 }

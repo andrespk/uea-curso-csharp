@@ -1,17 +1,18 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Entities;
+using MiniKanban.Application.Interfaces.Comment;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Comment;
 
 public class CreateCommentService : ICreateCommentService, ScopedInjection
 {
-    private readonly ICommentRepository _commentRepository;
     private readonly ICardRepository _cardRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly ICommentRepository _commentRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     public CreateCommentService(
         ICommentRepository commentRepository,
@@ -25,7 +26,8 @@ public class CreateCommentService : ICreateCommentService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<CommentResponseDto> CreateAsync(CreateCommentDto request, CancellationToken cancellationToken = default)
+    public async Task<CommentResponseDto> CreateAsync(CreateCommentDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -42,4 +44,3 @@ public class CreateCommentService : ICreateCommentService, ScopedInjection
         return CommentMapping.ToResponse(comment);
     }
 }
-

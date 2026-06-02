@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Abstractions;
 using MiniKanban.Infrastructure.Data.Context;
 
@@ -30,11 +31,7 @@ public class CardTagRepository : Repository<CardTag>, ICardTagRepository, Scoped
     {
         var cardTag = await Context.CardTags
             .FirstOrDefaultAsync(ct => ct.CardId == cardId && ct.TagId == tagId, cancellationToken);
-        
-        if (cardTag != null)
-        {
-            Context.CardTags.Remove(cardTag);
-        }
+
+        if (cardTag != null) Context.CardTags.Remove(cardTag);
     }
 }
-

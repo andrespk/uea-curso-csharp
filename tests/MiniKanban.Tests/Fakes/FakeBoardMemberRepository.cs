@@ -1,5 +1,5 @@
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.Repositories;
 
 namespace MiniKanban.Tests.Fakes;
 
@@ -22,9 +22,11 @@ public class FakeBoardMemberRepository : FakeRepository<BoardMember>, IBoardMemb
         return Task.FromResult<IEnumerable<BoardMember>>(members);
     }
 
-    public Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)
+    public Task<BoardMember?> GetByBoardAndUserAsync(Guid boardId, Guid userId,
+        CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(SavedItems.FirstOrDefault(member => member.BoardId == boardId && member.UserId == userId));
+        return Task.FromResult(
+            SavedItems.FirstOrDefault(member => member.BoardId == boardId && member.UserId == userId));
     }
 
     public Task<bool> ExistsAsync(Guid boardId, Guid userId, CancellationToken cancellationToken = default)

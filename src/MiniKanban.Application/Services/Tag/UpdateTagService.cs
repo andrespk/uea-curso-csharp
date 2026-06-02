@@ -1,9 +1,11 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.Tag;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Tag;
 
 public class UpdateTagService : IUpdateTagService, ScopedInjection
 {
@@ -18,19 +20,18 @@ public class UpdateTagService : IUpdateTagService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TagResponseDto> UpdateAsync(Guid id, UpdateTagDto request, CancellationToken cancellationToken = default)
+    public async Task<TagResponseDto> UpdateAsync(Guid id, UpdateTagDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var tag = await _tagRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Tag not found.");
+                  ?? throw new BusinessException("Tag not found.");
 
         // If name is being updated, check for uniqueness
         if (!string.IsNullOrEmpty(request.Name) && request.Name != tag.Name)
-        {
             if (await _tagRepository.NameExistsAsync(tag.BoardId, request.Name, cancellationToken))
                 throw new BusinessException("Tag name already exists in this board.");
-        }
 
         var updatedTag = TagMapping.ToEntity(request, tag);
         await _tagRepository.UpdateAsync(updatedTag, cancellationToken);
@@ -39,4 +40,3 @@ public class UpdateTagService : IUpdateTagService, ScopedInjection
         return TagMapping.ToResponse(updatedTag);
     }
 }
-

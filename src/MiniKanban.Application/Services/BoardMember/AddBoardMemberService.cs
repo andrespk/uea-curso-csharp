@@ -1,18 +1,19 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
-using MiniKanban.Domain.Entities;
+using MiniKanban.Application.Interfaces.BoardMember;
 using MiniKanban.Domain.Enums;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.BoardMember;
 
 public class AddBoardMemberService : IAddBoardMemberService, ScopedInjection
 {
     private readonly IBoardMemberRepository _boardMemberRepository;
     private readonly IBoardRepository _boardRepository;
-    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
     public AddBoardMemberService(
         IBoardMemberRepository boardMemberRepository,
@@ -26,7 +27,8 @@ public class AddBoardMemberService : IAddBoardMemberService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<BoardMemberResponseDto> AddAsync(CreateBoardMemberDto request, CancellationToken cancellationToken = default)
+    public async Task<BoardMemberResponseDto> AddAsync(CreateBoardMemberDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

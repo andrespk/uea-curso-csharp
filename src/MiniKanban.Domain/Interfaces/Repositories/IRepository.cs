@@ -1,6 +1,4 @@
-using System.Threading;
-
-namespace MiniKanban.Domain.Interfaces;
+namespace MiniKanban.Domain.Interfaces.Repositories;
 
 public interface IRepository<TEntity> where TEntity : class
 {

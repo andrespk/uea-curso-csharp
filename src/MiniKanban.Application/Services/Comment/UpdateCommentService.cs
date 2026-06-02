@@ -1,9 +1,11 @@
 using MiniKanban.Application.DTOs;
-using MiniKanban.Application.Interfaces;
+using MiniKanban.Application.Interfaces.Comment;
 using MiniKanban.Domain.Interfaces;
-using MiniKanban.Exceptions.Users;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
+using MiniKanban.Exceptions;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.Comment;
 
 public class UpdateCommentService : IUpdateCommentService, ScopedInjection
 {
@@ -18,12 +20,13 @@ public class UpdateCommentService : IUpdateCommentService, ScopedInjection
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<CommentResponseDto> UpdateAsync(Guid id, UpdateCommentDto request, CancellationToken cancellationToken = default)
+    public async Task<CommentResponseDto> UpdateAsync(Guid id, UpdateCommentDto request,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         var comment = await _commentRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new BusinessException("Comment not found.");
+                      ?? throw new BusinessException("Comment not found.");
 
         var updatedComment = CommentMapping.ToEntity(request, comment);
         await _commentRepository.UpdateAsync(updatedComment, cancellationToken);
@@ -32,4 +35,3 @@ public class UpdateCommentService : IUpdateCommentService, ScopedInjection
         return CommentMapping.ToResponse(updatedComment);
     }
 }
-

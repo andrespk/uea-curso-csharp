@@ -1,9 +1,6 @@
-using System.Threading;
-
-namespace MiniKanban.Application.Interfaces;
+namespace MiniKanban.Application.Interfaces.Comment;
 
 public interface IDeleteCommentService
 {
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }
-

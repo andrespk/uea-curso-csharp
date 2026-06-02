@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniKanban.Domain.Entities;
-using MiniKanban.Domain.Interfaces;
+using MiniKanban.Domain.Interfaces.DependencyInjection;
+using MiniKanban.Domain.Interfaces.Repositories;
 using MiniKanban.Infrastructure.Data.Abstractions;
 using MiniKanban.Infrastructure.Data.Context;
 
@@ -26,4 +27,3 @@ public class TagRepository : Repository<Tag>, ITagRepository, ScopedInjection
             .AnyAsync(t => t.BoardId == boardId && t.Name.ToLower() == name.ToLower(), cancellationToken);
     }
 }
-

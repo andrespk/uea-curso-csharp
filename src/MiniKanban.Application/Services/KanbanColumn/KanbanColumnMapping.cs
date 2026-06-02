@@ -1,22 +1,21 @@
 using Mapster;
 using MiniKanban.Application.DTOs;
-using MiniKanban.Domain.Entities;
 
-namespace MiniKanban.Application.Services;
+namespace MiniKanban.Application.Services.KanbanColumn;
 
 internal static class KanbanColumnMapping
 {
-    public static KanbanColumnResponseDto ToResponse(KanbanColumn column)
+    public static KanbanColumnResponseDto ToResponse(Domain.Entities.KanbanColumn column)
     {
         return column.Adapt<KanbanColumnResponseDto>();
     }
 
-    public static KanbanColumn ToEntity(CreateKanbanColumnDto dto)
+    public static Domain.Entities.KanbanColumn ToEntity(CreateKanbanColumnDto dto)
     {
-        return dto.Adapt<KanbanColumn>();
+        return dto.Adapt<Domain.Entities.KanbanColumn>();
     }
 
-    public static KanbanColumn ToEntity(UpdateKanbanColumnDto dto, KanbanColumn entity)
+    public static Domain.Entities.KanbanColumn ToEntity(UpdateKanbanColumnDto dto, Domain.Entities.KanbanColumn entity)
     {
         return dto.Adapt(entity);
     }

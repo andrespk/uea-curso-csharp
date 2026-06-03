@@ -1,12 +1,10 @@
-version: '3.9'
-
 services:
   # PostgreSQL Database
   minikanban-db:
     image: postgres:16
     container_name: minikanban-db
     environment:
-      POSTGRES_DB: minikanban
+      POSTGRES_DB: minikanban-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -33,9 +31,9 @@ services:
       minikanban-db:
         condition: service_healthy
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: "Host=minikanban-db;Port=5432;Database=minikanban;Username=postgres;Password=postgres;"
+      ConnectionStrings__DefaultConnection: "Host=minikanban-db;Port=5432;Database=minikanban-db;Username=postgres;Password=postgres;"
       Jwt__Key: "MiniKanbanSuperSecretKeyFor2026PleaseChangeThis123456789!@#$%^&*()"
       Jwt__Issuer: "https://minikanban.local"
       Jwt__Audience: "https://minikanban.local"
@@ -45,7 +43,7 @@ services:
       - minikanban-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/swagger/v1/swagger.json"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -73,4 +71,3 @@ volumes:
 networks:
   minikanban-network:
     driver: bridge
-

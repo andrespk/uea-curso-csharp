@@ -1,6 +1,171 @@
-@MiniKanban.API_HostAddress = http://localhost:5093
+@host = http://localhost:5093
+@token = cole_o_token_aqui
+@userId = cole_um_user_id_aqui
+@boardId = cole_um_board_id_aqui
+@memberId = cole_um_board_member_id_aqui
+@columnId = cole_um_column_id_aqui
+@cardId = cole_um_card_id_aqui
+@tagId = cole_um_tag_id_aqui
+@commentId = cole_um_comment_id_aqui
 
-GET {{MiniKanban.API_HostAddress}}/weatherforecast/
-Accept: application/json
+### Healthcheck
+GET {{host}}/health
 
-###
+### Registro publico
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "username": "maria",
+  "email": "maria@kanban.com",
+  "password": "Password123",
+  "role": "User"
+}
+
+### Login publico
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "Password123"
+}
+
+### Usuario autenticado
+GET {{host}}/api/me
+Authorization: Bearer {{token}}
+
+### Listar usuarios
+GET {{host}}/api/users
+Authorization: Bearer {{token}}
+
+### Criar board
+POST {{host}}/api/boards
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Projeto Final",
+  "description": "Quadro de acompanhamento do trabalho final"
+}
+
+### Listar boards do usuario autenticado
+GET {{host}}/api/boards
+Authorization: Bearer {{token}}
+
+### Buscar board por ID
+GET {{host}}/api/boards/{{boardId}}
+Authorization: Bearer {{token}}
+
+### Atualizar board
+PUT {{host}}/api/boards/{{boardId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Projeto Final - Revisado",
+  "description": "Quadro atualizado"
+}
+
+### Adicionar membro ao board
+POST {{host}}/api/board-members
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "boardId": "{{boardId}}",
+  "userId": "{{userId}}",
+  "role": "Member"
+}
+
+### Listar membros do board
+GET {{host}}/api/boards/{{boardId}}/members
+Authorization: Bearer {{token}}
+
+### Criar coluna Kanban
+POST {{host}}/api/kanban-columns
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "boardId": "{{boardId}}",
+  "name": "A Fazer",
+  "order": 1,
+  "wipLimit": 5
+}
+
+### Listar colunas do board
+GET {{host}}/api/boards/{{boardId}}/kanban-columns
+Authorization: Bearer {{token}}
+
+### Criar card
+POST {{host}}/api/cards
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "columnId": "{{columnId}}",
+  "assignedToUserId": "{{userId}}",
+  "title": "Implementar endpoints finais",
+  "description": "Finalizar fluxo de cards, tags e comentarios",
+  "priority": 2,
+  "dueDate": "2026-06-10T23:59:00Z"
+}
+
+### Listar cards por coluna
+GET {{host}}/api/columns/{{columnId}}/cards
+Authorization: Bearer {{token}}
+
+### Criar tag
+POST {{host}}/api/tags
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "boardId": "{{boardId}}",
+  "name": "Backend",
+  "color": "#2563eb"
+}
+
+### Listar tags do board
+GET {{host}}/api/boards/{{boardId}}/tags
+Authorization: Bearer {{token}}
+
+### Associar tag ao card
+POST {{host}}/api/card-tags
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cardId": "{{cardId}}",
+  "tagId": "{{tagId}}"
+}
+
+### Listar tags do card
+GET {{host}}/api/cards/{{cardId}}/tags
+Authorization: Bearer {{token}}
+
+### Criar comentario
+POST {{host}}/api/comments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cardId": "{{cardId}}",
+  "content": "Comentario criado durante o roteiro de testes."
+}
+
+### Listar comentarios do card
+GET {{host}}/api/cards/{{cardId}}/comments
+Authorization: Bearer {{token}}
+
+### Atualizar comentario
+PUT {{host}}/api/comments/{{commentId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "Comentario atualizado."
+}
+

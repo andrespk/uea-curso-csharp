@@ -23,7 +23,7 @@ graph TD
 
 *   **`MiniKanban.Domain`**: O núcleo do sistema. Contém as entidades de negócio (ex: `User`), regras essenciais do domínio, interfaces base e abstrações. É totalmente independente de frameworks e tecnologias externas.
 *   **`MiniKanban.Application`**: Responsável por orquestrar o fluxo de dados da aplicação. Contém os casos de uso, interfaces de serviços, DTOs (Data Transfer Objects), validações e helpers (como criptografia de senha). Depende apenas da camada de Domínio.
-*   **`MiniKanban.Infrastructure`**: Implementa as tecnologias e integrações externas necessárias para a aplicação rodar. Contém o DbContext do Entity Framework Core, as migrações de banco, os repositórios concretos e o controle de Unit of Work.
+*   **`MiniKanban.Infrastructure`**: Implementa as tecnologias e integrações externas necessárias para a aplicação rodar. Contém o DbContext do Entity Framework Core, as configurações de mapeamento, os repositórios concretos e o controle de Unit of Work.
 *   **`MiniKanban.API`**: A porta de entrada da aplicação. Implementa as rotas REST usando Minimal APIs, tratamento global de exceções, filtros customizados do Swagger e configurações de autenticação JWT/Autorização.
 *   **`MiniKanban.Exceptions`**: Uma camada de suporte contendo as definições de exceções customizadas da aplicação (como `BusinessException` e `ValidationError`), permitindo um tratamento de erro consistente e padronizado em todas as camadas.
 
@@ -41,33 +41,53 @@ graph TD
 
 ## ⚙️ Instruções de Inicialização
 
-### Passo 1: Subir o Banco de Dados (PostgreSQL)
+### Opção 1: Subir todo o ambiente com Docker Compose
 
-O banco de dados PostgreSQL roda dentro de um container Docker. Certifique-se de que o Docker Engine esteja ativo em sua máquina e execute:
+Na raiz do repositório:
 
-1. Abra um terminal e navegue até a pasta `db/` no projeto:
-   ```bash
-   cd db
-   ```
-2. Execute o comando para iniciar o container em segundo plano:
-   ```bash
-   docker compose up -d
-   ```
-   *(Nota: O banco subirá mapeado para a porta local `5433`, conforme configurado no `docker-compose.yml` e na connection string da aplicação).*
+```bash
+docker compose up --build
+```
 
----
+Serviços disponíveis:
 
-### Passo 2: Executar a Aplicação (API)
+*   Frontend React/Nginx: `http://localhost:3000`
+*   API ASP.NET Core: `http://localhost:5093`
+*   Scalar/OpenAPI: `http://localhost:5093/api-docs`
+*   PostgreSQL: `localhost:5433`
 
-Com o banco de dados ativo, a API se encarregará de criar a estrutura de tabelas e inserir o usuário administrador inicial (`admin`) na primeira execução.
+O Compose sobe PostgreSQL, API e frontend. O banco é inicializado com o script [`db/create-tables.sql`](db/create-tables.sql), e a API também possui rotina de inicialização via EF Core para criar tabelas quando não houver migrations aplicadas.
 
-1. Navegue até a raiz do projeto.
-2. Execute o seguinte comando do .NET CLI:
-   ```bash
-   dotnet run --project src/MiniKanban.API/MiniKanban.API.csproj --launch-profile http
-   ```
-3. A aplicação estará ativa em:
-   *   `http://localhost:5093`
+### Opção 2: Subir apenas o banco e rodar a API localmente
+
+```bash
+cd db
+docker compose up -d
+```
+
+Depois, na raiz do repositório:
+
+```bash
+dotnet run --project src/MiniKanban.API/MiniKanban.API.csproj --launch-profile http
+```
+
+A API local ficará em `http://localhost:5093`.
+
+### Banco de dados e criação de tabelas
+
+O projeto usa PostgreSQL com Entity Framework Core e provider Npgsql. Não há migrations versionadas no repositório; o método documentado de criação do banco é:
+
+*   Docker: script [`db/create-tables.sql`](db/create-tables.sql), montado em `/docker-entrypoint-initdb.d/`.
+*   Execução da API: rotina em [`Program.cs`](src/MiniKanban.API/Program.cs) que usa EF Core para criar o banco/tabelas quando necessário.
+
+Usuário administrador inicial:
+
+```json
+{
+  "username": "admin",
+  "password": "Password123"
+}
+```
 
 ---
 
@@ -126,7 +146,7 @@ Para testar os endpoints protegidos, você pode obter um token JWT efetuando o l
 }
 ```
 Use o token retornado como cabeçalho de autenticação `Authorization: Bearer <TOKEN>` para acessar o endpoint de teste:
-*   `GET /api/protected`
+*   `GET /api/me`
 
 Também é possível criar uma nova conta pelo endpoint público:
 
@@ -152,6 +172,7 @@ Também é possível criar uma nova conta pelo endpoint público:
 | --- | --- | --- |
 | `POST` | `/api/auth/register` | Cria um novo usuário com senha armazenada em hash. |
 | `POST` | `/api/auth/login` | Autentica usuário e retorna token JWT. |
+| `GET` | `/health` | Healthcheck da API. |
 
 ### Protegidos por JWT
 
@@ -160,7 +181,6 @@ Todos os endpoints abaixo exigem o cabeçalho `Authorization: Bearer <TOKEN>`.
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | `GET` | `/api/me` | Retorna os dados do usuário autenticado. |
-| `GET` | `/api/protected` | Endpoint simples para validar se o token está funcionando. |
 | `GET` | `/api/users` | Lista usuários cadastrados sem expor hash de senha. |
 | `GET` | `/api/users/{id}` | Busca usuário por ID. |
 | `POST` | `/api/boards` | Cria board para o usuário autenticado. O `OwnerId` vem do token. |
@@ -177,6 +197,21 @@ Todos os endpoints abaixo exigem o cabeçalho `Authorization: Bearer <TOKEN>`.
 | `GET` | `/api/boards/{boardId}/kanban-columns` | Lista colunas de um board. |
 | `PUT` | `/api/kanban-columns/{id}` | Atualiza nome, ordem e WIP limit de uma coluna. |
 | `DELETE` | `/api/kanban-columns/{id}` | Remove coluna Kanban. |
+| `POST` | `/api/cards` | Cria card em uma coluna. O criador vem do token. |
+| `GET` | `/api/columns/{columnId}/cards` | Lista cards de uma coluna. |
+| `PUT` | `/api/cards/{id}` | Atualiza card. |
+| `DELETE` | `/api/cards/{id}` | Remove card. |
+| `POST` | `/api/tags` | Cria tag em um board. |
+| `GET` | `/api/boards/{boardId}/tags` | Lista tags de um board. |
+| `PUT` | `/api/tags/{id}` | Atualiza tag. |
+| `DELETE` | `/api/tags/{id}` | Remove tag. |
+| `POST` | `/api/card-tags` | Associa tag a um card. |
+| `GET` | `/api/cards/{cardId}/tags` | Lista tags de um card. |
+| `DELETE` | `/api/cards/{cardId}/tags/{tagId}` | Remove associação entre card e tag. |
+| `POST` | `/api/comments` | Cria comentário em um card. O autor vem do token. |
+| `GET` | `/api/cards/{cardId}/comments` | Lista comentários de um card. |
+| `PUT` | `/api/comments/{id}` | Atualiza comentário. |
+| `DELETE` | `/api/comments/{id}` | Remove comentário. |
 
 ---
 
@@ -191,6 +226,34 @@ Todos os endpoints abaixo exigem o cabeçalho `Authorization: Bearer <TOKEN>`.
 *   A ordem da coluna não pode ser negativa.
 *   O WIP limit não pode ser negativo.
 *   A ordem da coluna deve ser única dentro do board no momento da criação.
+*   Cards são criados em colunas existentes e registram o usuário autenticado como criador.
+*   Tags pertencem a um board e podem ser associadas a cards.
+*   Comentários pertencem a um card e registram o usuário autenticado como autor.
+
+---
+
+## 🧪 Roteiro de Testes Manuais
+
+O arquivo [`src/MiniKanban.API/MiniKanban.API.http`](src/MiniKanban.API/MiniKanban.API.http) contém uma coleção de requisições para testar:
+
+*   healthcheck;
+*   registro e login;
+*   endpoint protegido `/api/me`;
+*   CRUD de boards;
+*   membros do board;
+*   colunas Kanban;
+*   cards;
+*   tags;
+*   associação card/tag;
+*   comentários.
+
+Fluxo recomendado para demonstração:
+
+1. Execute `docker compose up --build`.
+2. Acesse `http://localhost:5093/api-docs`.
+3. Faça login com `admin` / `Password123`.
+4. Copie o token JWT no botão de autenticação Bearer.
+5. Crie board, coluna, card, tag, associação card/tag e comentário.
 
 ---
 
@@ -201,8 +264,7 @@ O projeto possui testes unitários para os services já implementados em `MiniKa
 Para executar:
 
 ```bash
-cd src
-dotnet test MiniKanban.Tests/MiniKanban.Tests.csproj --no-restore -p:UseSharedCompilation=false -m:1
+dotnet test tests/MiniKanban.Tests/MiniKanban.Tests.csproj --no-restore -p:UseSharedCompilation=false -m:1
 ```
 
 Cobertura atual:
@@ -212,3 +274,5 @@ Cobertura atual:
 *   Criação, atualização, busca e remoção de board.
 *   Adição, atualização e remoção de membros.
 *   Criação e atualização de colunas Kanban.
+
+Última validação local: `17` testes passaram.

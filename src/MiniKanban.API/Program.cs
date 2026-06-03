@@ -156,10 +156,22 @@ if (app.Environment.IsDevelopment())
         options => { options.WithOpenApiRoutePattern("/swagger/{documentName}/swagger.json"); });
 }
 
-app.UseHttpsRedirection();
+if (!string.Equals(
+        Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"),
+        "true",
+        StringComparison.OrdinalIgnoreCase))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }))
+    .AllowAnonymous()
+    .WithName("HealthCheck")
+    .WithTags("Health")
+    .ExcludeFromDescription();
 
 app.MapEndpoints();
 
